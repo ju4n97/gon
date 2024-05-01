@@ -20,34 +20,34 @@ type RouterConfig struct {
 }
 
 func InitRouter(config RouterConfig) chi.Router {
-	r := chi.NewRouter()
+	router := chi.NewRouter()
 
-	r.Use(cors.Handler(config.Cors))
-	r.Use(middleware.RequestID)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.CleanPath)
-	r.Use(middleware.AllowContentType("application/json", "text/xml"))
-	r.Use(middleware.Timeout(config.Timeout))
-	r.Use(httprate.LimitByIP(100, 1*time.Minute))
+	router.Use(cors.Handler(config.Cors))
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.CleanPath)
+	router.Use(middleware.AllowContentType("application/json", "text/xml"))
+	router.Use(middleware.Timeout(config.Timeout))
+	router.Use(httprate.LimitByIP(100, 1*time.Minute))
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, friend"))
 	})
 
-	r.Route("/api", func(r chi.Router) {
-		r.Route("/v1", func(r chi.Router) {
-			r.Get("/example", func(w http.ResponseWriter, r *http.Request) {
+	router.Route("/api", func(r chi.Router) {
+		router.Route("/v1", func(r chi.Router) {
+			router.Get("/example", func(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Hello, this is version 1!"))
 			})
 		})
 
-		r.Route("/v2", func(r chi.Router) {
-			r.Get("/example", func(w http.ResponseWriter, r *http.Request) {
+		router.Route("/v2", func(r chi.Router) {
+			router.Get("/example", func(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Hello, this is version 2!"))
 			})
 		})
 	})
 
-	return r
+	return router
 }

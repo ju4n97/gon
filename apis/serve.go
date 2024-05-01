@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -27,22 +28,14 @@ type ServeConfig struct {
 
 // Serve starts a web server
 func Serve(config ServeConfig) {
+	// TODO: connect to the database
+
 	// TODO: ensure the latest migrations are applied before starting the server
 	// if err := runMigrations(); err != nil {
 	// 	return nil, err
 	// }
 
-	if len(config.AllowedOrigins) == 0 {
-		config.AllowedOrigins = []string{"*"}
-	}
-
-	if len(config.AllowedMethods) == 0 {
-		config.AllowedMethods = []string{http.MethodGet, http.MethodHead, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete}
-	}
-
-	if len(config.AllowedHeaders) == 0 {
-		config.AllowedHeaders = []string{"User-Agent,Content-Type,Accept,Accept-Encoding,Accept-Language,Cache-Control,Connection,DNT,Host,Origin,Pragma,Referer"}
-	}
+	fmt.Println(config)
 
 	r := InitRouter(RouterConfig{
 		Cors: cors.Options{

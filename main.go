@@ -1,18 +1,31 @@
 package main
 
 import (
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 	"github.com/mesatechlabs/kitten/cmd"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
-	rootCmd := &cobra.Command{
-		Use:   "app",
-		Short: "A brief description of your application",
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
 	}
 
-	rootCmd.AddCommand(cmd.NewVersionCommand())
-	rootCmd.AddCommand(cmd.NewServeCommand())
+	app := &cli.App{
+		Name:                 "kitten",
+		Usage:                "SvelteKit template powered by a Go backend",
+		Version:              "0.0.1",
+		EnableBashCompletion: true,
+		Commands: []*cli.Command{
+			cmd.NewServeCommand(),
+		},
+	}
 
-	rootCmd.Execute()
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
+	}
 }

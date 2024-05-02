@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/mesatechlabs/kitten/apis"
@@ -11,7 +12,7 @@ import (
 
 // NewServeCommand returns a new CLI command that starts a web server
 func NewServeCommand() *cli.Command {
-	defaultHttpAddr := "127.0.0.1:3000"
+	defaultPort := 3000
 
 	defaultOrigins := []string{"*"}
 
@@ -41,14 +42,14 @@ func NewServeCommand() *cli.Command {
 
 	return &cli.Command{
 		Name:  "serve",
-		Usage: fmt.Sprintf("Starts a web HTTP server (default: %s)", defaultHttpAddr),
+		Usage: fmt.Sprintf("Starts a web HTTP server on http://127.0.0.1:%s", strconv.Itoa(defaultPort)),
 		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:        "http-addr",
-				Usage:       "Address and port where the server will listen for HTTP requests",
-				Value:       defaultHttpAddr,
-				DefaultText: defaultHttpAddr,
-				EnvVars:     []string{"HTTP_ADDR"},
+			&cli.IntFlag{
+				Name:        "port",
+				Usage:       "Port where the server will listen for HTTP requests",
+				Value:       defaultPort,
+				DefaultText: strconv.Itoa(defaultPort),
+				EnvVars:     []string{"PORT"},
 			},
 			&cli.StringSliceFlag{
 				Name:        "allowed-origins",
@@ -71,13 +72,20 @@ func NewServeCommand() *cli.Command {
 				DefaultText: strings.Join(defaultHeaders, ","),
 				EnvVars:     []string{"CORS_ALLOWED_HEADERS"},
 			},
+			&cli.BoolFlag{
+				Name:        "verbose",
+				Aliases:     []string{"v"},
+				Usage:       "Prints the configuration used to start the server",
+				DefaultText: "false",
+			},
 		},
 		Action: func(c *cli.Context) error {
 			apis.Serve(apis.ServeConfig{
-				HttpAddr:       c.String("http-addr"),
+				Port:           c.String("port"),
 				AllowedOrigins: c.StringSlice("allowed-origins"),
 				AllowedMethods: c.StringSlice("allowed-methods"),
 				AllowedHeaders: c.StringSlice("allowed-headers"),
+				Verbose:        c.Bool("verbose"),
 			})
 			return nil
 		},

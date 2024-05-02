@@ -8,6 +8,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
+
+	"github.com/mesatechlabs/kitten/apis/health"
+	v1 "github.com/mesatechlabs/kitten/apis/v1/todos"
 )
 
 // RouterConfig defines the configuration for the web server router
@@ -36,16 +39,10 @@ func InitRouter(config RouterConfig) chi.Router {
 	})
 
 	router.Route("/api", func(r chi.Router) {
-		router.Route("/v1", func(r chi.Router) {
-			router.Get("/example", func(w http.ResponseWriter, r *http.Request) {
-				w.Write([]byte("Hello, this is version 1!"))
-			})
-		})
+		r.Mount("/health", health.NewHealthCheckRouter())
 
-		router.Route("/v2", func(r chi.Router) {
-			router.Get("/example", func(w http.ResponseWriter, r *http.Request) {
-				w.Write([]byte("Hello, this is version 2!"))
-			})
+		r.Route("/v1", func(r chi.Router) {
+			r.Mount("/todos", v1.NewTodosRouter())
 		})
 	})
 

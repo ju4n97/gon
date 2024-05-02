@@ -4,16 +4,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/mesatechlabs/kitten/cmd"
+	"github.com/mesatechlabs/kitten/config"
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file", err)
-	}
+	config.LoadEnv()
 
 	app := &cli.App{
 		Name:                 "kitten",

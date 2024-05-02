@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -13,17 +14,20 @@ import (
 
 // ServeConfig defines the configuration for the web server
 type ServeConfig struct {
-	// HttpAddr is the address to listen on for HTTP connections (defaults to "127.0.0.1:3333")
-	HttpAddr string
+	// Port is the HTTP port to listen on (default: 3000)
+	Port string
 
-	// AllowedOrigins is an optional list of allowed CORS origins (defaults to "*")
+	// AllowedOrigins is an optional list of allowed CORS origins (default: "*")
 	AllowedOrigins []string
 
-	// AllowedMethods is an optional list of allowed HTTP methods (defaults to "GET,HEAD,POST,PUT,PATCH,DELETE")
+	// AllowedMethods is an optional list of allowed HTTP methods (default: "GET,HEAD,POST,PUT,PATCH,DELETE")
 	AllowedMethods []string
 
-	// AllowedHeaders is an optional list of allowed HTTP headers (defaults to "User-Agent,Content-Type,Accept,Accept-Encoding,Accept-Language,Cache-Control,Connection,DNT,Host,Origin,Pragma,Referer")
+	// AllowedHeaders is an optional list of allowed HTTP headers (default: "User-Agent,Content-Type,Accept,Accept-Encoding,Accept-Language,Cache-Control,Connection,DNT,Host,Origin,Pragma,Referer")
 	AllowedHeaders []string
+
+	// Verbose enables verbose logging during the server startup (default: false)
+	Verbose bool
 }
 
 // Serve starts a web server
@@ -35,7 +39,13 @@ func Serve(config ServeConfig) {
 	// 	return nil, err
 	// }
 
-	fmt.Println(config)
+	if config.Verbose {
+		bytes, err := json.MarshalIndent(config, "", "  ")
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(string(bytes))
+	}
 
 	r := InitRouter(RouterConfig{
 		Cors: cors.Options{
@@ -47,17 +57,14 @@ func Serve(config ServeConfig) {
 		Timeout: 60 * time.Second,
 	})
 
-	protocol := "http"
-	version := "v1"
+	httpAddr := fmt.Sprintf("127.0.0.1:%s", config.Port)
 
 	c := color.New()
-	c.Printf("└─ REST API: %s\n", color.GreenString("%s://%s/api/%s",
-		protocol,
-		config.HttpAddr,
-		version,
-	))
+	c.Printf("└─ REST API: %s\n", color.GreenString("http://%s/api", httpAddr))
+	c.Printf("   ├─ Health: %s\n", color.GreenString("http://%s/api/health", httpAddr))
+	c.Printf("   └─ v1: %s\n", color.GreenString("http://%s/api/v1", httpAddr))
 
-	if err := http.ListenAndServe(config.HttpAddr, r); err != nil {
+	if err := http.ListenAndServe(httpAddr, r); err != nil {
 		log.Fatal(err)
 	}
 }

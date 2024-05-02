@@ -1,0 +1,31 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "internals/database/queries/"
+    schema: "internals/database/schema.sql"    
+    gen:
+      go:
+        package: "database"
+        out: "internals/database/codegen"
+        sql_package: "pgx/v5"
+    database:
+      uri: "postgres://root:changeme@localhost:5432/kitten"
+    rules:             
+      - sqlc/db-prepare
+      - no-exec
+      - postgresql-query-too-costly
+      - postgresql-no-seq-scan
+
+rules:
+  - name: no-exec
+    message: "Avoid using exec due to potential SQL injection risks, performance issues, and debugging difficulties."
+    rule: |
+      query.cmd == "exec"
+  
+  - name: postgresql-query-too-costly
+    message: "The estimated cost of your query is high, indicating it may consume significant resources. Consider optimizing your query for better performance."
+    rule: "postgresql.explain.plan.total_cost > 1.0"
+
+  - name: postgresql-no-seq-scan
+    message: "Your query results in a sequential scan, which can be resource-intensive. Consider adding an index to improve query performance."
+    rule: "postgresql.explain.plan.node_type == 'Seq Scan'"

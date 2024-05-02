@@ -25,14 +25,17 @@ type RouterConfig struct {
 func InitRouter(config RouterConfig) chi.Router {
 	router := chi.NewRouter()
 
-	router.Use(cors.Handler(config.Cors))
-	router.Use(middleware.RequestID)
-	router.Use(middleware.Logger)
-	router.Use(middleware.Recoverer)
-	router.Use(middleware.CleanPath)
-	router.Use(middleware.AllowContentType("application/json", "text/xml"))
-	router.Use(middleware.Timeout(config.Timeout))
-	router.Use(httprate.LimitByIP(100, 1*time.Minute))
+	router.Use(
+		cors.Handler(config.Cors),
+		middleware.RequestID,
+		middleware.Logger,
+		middleware.Recoverer,
+		middleware.CleanPath,
+		middleware.AllowContentType("application/json", "text/xml"),
+		middleware.ContentCharset("UTF-8", "Latin-1"),
+		middleware.Timeout(config.Timeout),
+		httprate.LimitByIP(100, 1*time.Minute),
+	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, friend"))

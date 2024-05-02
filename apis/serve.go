@@ -8,6 +8,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/go-chi/cors"
+	"github.com/mesatechlabs/kitten/internals/database"
 
 	"net/http"
 )
@@ -30,14 +31,28 @@ type ServeConfig struct {
 	Verbose bool
 }
 
-// Serve starts a web server
+// Serve is a function that starts a web server with the provided configuration.
+// It first checks the database connection and applies any pending database migrations.
+//
+// Example:
+//
+//	config := ServeConfig{
+//	    Verbose: true,
+//	    AllowedOrigins: []string{"http://example.com"},
+//	    AllowedMethods: []string{"GET", "POST"},
+//	    AllowedHeaders: []string{"Content-Type"},
+//	    Port: "8080",
+//	}
+//
+// Serve(config)
 func Serve(config ServeConfig) {
-	// TODO: connect to the database
+	if err := database.CheckDatabaseConnection(); err != nil {
+		log.Fatal("Failed to connect to database: ", err)
+	}
 
-	// TODO: ensure the latest migrations are applied before starting the server
-	// if err := runMigrations(); err != nil {
-	// 	return nil, err
-	// }
+	if err := database.CheckDatabaseMigrations(); err != nil {
+		log.Fatal("Failed to apply database migrations: ", err)
+	}
 
 	if config.Verbose {
 		bytes, err := json.MarshalIndent(config, "", "  ")
@@ -52,7 +67,8 @@ func Serve(config ServeConfig) {
 			AllowedOrigins:   config.AllowedOrigins,
 			AllowedMethods:   config.AllowedMethods,
 			AllowedHeaders:   config.AllowedHeaders,
-			AllowCredentials: true,
+			AllowCredentials: false,
+			MaxAge:           300,
 		},
 		Timeout: 60 * time.Second,
 	})

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/mesatechlabs/kitten/cmd"
-	"github.com/mesatechlabs/kitten/config"
+	"github.com/mesatechlabs/kitten/internals/config"
 	"github.com/urfave/cli/v2"
 )
 

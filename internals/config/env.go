@@ -17,11 +17,7 @@ type EnvConfig struct {
 	CorsAllowedMethods []string `validate:"dive,omitempty,eq=*|oneof=GET HEAD POST PUT PATCH DELETE OPTIONS CONNECT TRACE"`
 	CorsAllowedHeaders []string
 
-	PostgresHost     string `validate:"required"`
-	PostgresPort     string `validate:"required,port"`
-	PostgresUser     string `validate:"required"`
-	PostgresPassword string `validate:"required"`
-	PostgresDBName   string `validate:"required"`
+	DatabaseUri string `validate:"required,uri"`
 }
 
 func LoadEnv() {
@@ -37,11 +33,7 @@ func LoadEnv() {
 		CorsAllowedMethods: strings.Split(os.Getenv("CORS_ALLOWED_METHODS"), ","),
 		CorsAllowedHeaders: strings.Split(os.Getenv("CORS_ALLOWED_HEADERS"), ","),
 
-		PostgresHost:     os.Getenv("POSTGRES_HOST"),
-		PostgresPort:     os.Getenv("POSTGRES_PORT"),
-		PostgresUser:     os.Getenv("POSTGRES_USER"),
-		PostgresPassword: os.Getenv("POSTGRES_PASSWORD"),
-		PostgresDBName:   os.Getenv("POSTGRES_DB_NAME"),
+		DatabaseUri: os.Getenv("DATABASE_URI"),
 	}
 
 	validate := validator.New(validator.WithRequiredStructEnabled())

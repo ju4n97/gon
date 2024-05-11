@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	v10 "github.com/go-playground/validator/v10"
-	"github.com/mesatechlabs/kitten/validators"
+	"github.com/mesatechlabs/gokit/tools/validators"
 )
 
 func TestValidatePort(t *testing.T) {

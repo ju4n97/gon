@@ -1,8 +1,8 @@
 [![Cybernetically enhanced web apps: kit](https://sveltejs.github.io/assets/banner.png)](https://svelte.dev)
 
 [![license](https://img.shields.io/npm/l/svelte.svg?style=flat-square)](LICENSE.md)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/MesaTechLabs/kitten?style=flat-square)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/MesaTechLabs/kitten/ci.yml?style=flat-square&label=CI)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/MesaTechLabs/gokit?style=flat-square)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/MesaTechLabs/gokit/ci.yml?style=flat-square&label=CI)
 
 - [🌐 Visit live demo](#)
 - [📚 Read the docs](#)
@@ -60,7 +60,7 @@ This is a decidedly opinionated SvelteKit template, packed with modern technolog
   - [Lint translations](./github/workflows/ci.yaml) for ensuring consistent translation files
 - 🗂️ Pre-configured [GitHub issue templates](.github/ISSUE_TEMPLATE) using the [new forms syntax](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms).
 - 📦 [Changesets](https://github.com/changesets/changesets) for streamlined package versioning.
-- 👮 [BiomeJS](https://biomejs.dev) for linting and formatting, ensuring consistent code style (with [Prettier](https://prettier.io) for HTML formatting until [Biome supports it](https://biomejs.dev/internals/language-support/)).
+- 👮 [BiomeJS](https://biomejs.dev) for linting and formatting, ensuring consistent code style (with [Prettier](https://prettier.io) for HTML formatting until [Biome supports it](https://biomejs.dev/internal/language-support/)).
 - ⌨️ [hotkeys-js](https://github.com/jaywcjlove/hotkeys-js) for customizable OS-based keyboard shortcuts, improving accessibility and productivity.
 - 📈 Top-notch SEO with [svelte-meta-tags](https://www.npmjs.com/package/svelte-meta-tags), best practices like [JSON-LD](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data), [schema.org markup](https://schema.org/), [open graph meta tags](https://ogp.me/), [Twitter card meta tags](https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards), and [automatic sitemap generation](https://www.npmjs.com/package/svelte-sitemap) (see [SEO section](#seo)).
 - 🏎️ Great out-of-the-box performance and optimized [Core Web Vitals](https://web.dev/explore/learn-core-web-vitals) through:
@@ -91,12 +91,12 @@ This is a decidedly opinionated SvelteKit template, packed with modern technolog
 
 You have multiple options to start a new project based on this template:
 
-- [Create a GitHub repo from this template](https://github.com/MesaTechLabs/kitten/generate).
-- [Download the zip](https://github.com/MesaTechLabs/kitten/archive/refs/heads/master.zip) from the GitHub repository, which excludes the `.git` directory.
+- [Create a GitHub repo from this template](https://github.com/MesaTechLabs/gokit/generate).
+- [Download the zip](https://github.com/MesaTechLabs/gokit/archive/refs/heads/master.zip) from the GitHub repository, which excludes the `.git` directory.
 - Scaffold the project using [degit](https://github.com/Rich-Harris/degit).
 
   ```sh
-  bunx degit MesaTechLabs/kitten my-new-project
+  bunx degit MesaTechLabs/gokit my-new-project
   ```
 
 Alternatively, you can fork it on StackBlitz, an online IDE:  

@@ -8,9 +8,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
-
-	"github.com/mesatechlabs/kitten/apis/health"
-	v1 "github.com/mesatechlabs/kitten/apis/v1/todos"
+	"github.com/go-chi/render"
+	"github.com/mesatechlabs/gokit/apis/health"
+	todosV1 "github.com/mesatechlabs/gokit/apis/v1/todos"
 )
 
 // RouterConfig defines the configuration for the web server router
@@ -22,7 +22,7 @@ type RouterConfig struct {
 	Cors cors.Options
 }
 
-func InitRouter(config RouterConfig) chi.Router {
+func InitRouter(config *RouterConfig) chi.Router {
 	router := chi.NewRouter()
 
 	router.Use(
@@ -31,9 +31,8 @@ func InitRouter(config RouterConfig) chi.Router {
 		middleware.Logger,
 		middleware.Recoverer,
 		middleware.CleanPath,
-		middleware.AllowContentType("application/json", "text/xml"),
-		middleware.ContentCharset("UTF-8", "Latin-1"),
 		middleware.Timeout(config.Timeout),
+		render.SetContentType(render.ContentTypeJSON),
 		httprate.LimitByIP(100, 1*time.Minute),
 	)
 
@@ -44,8 +43,9 @@ func InitRouter(config RouterConfig) chi.Router {
 	router.Route("/api", func(r chi.Router) {
 		r.Mount("/health", health.NewHealthCheckRouter())
 
+		// API version 1
 		r.Route("/v1", func(r chi.Router) {
-			r.Mount("/todos", v1.NewTodosRouter())
+			r.Mount("/todos", todosV1.NewTodosRouter())
 		})
 	})
 

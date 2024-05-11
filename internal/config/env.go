@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
-	"github.com/mesatechlabs/kitten/validators"
+	"github.com/mesatechlabs/gokit/tools/validators"
 )
 
 type EnvConfig struct {

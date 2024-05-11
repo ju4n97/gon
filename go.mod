@@ -1,4 +1,4 @@
-module github.com/mesatechlabs/kitten
+module github.com/mesatechlabs/gokit
 
 go 1.22.2
 
@@ -8,15 +8,18 @@ require (
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/httprate v0.9.0
+	github.com/go-chi/render v1.0.3
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/joho/godotenv v1.5.1
+	github.com/sibiraj-s/unique-names-generator v0.2.1
 	github.com/urfave/cli/v2 v2.27.2
 )
 
 require (
 	ariga.io/atlas v0.22.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
+	github.com/ajg/form v1.5.1 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect

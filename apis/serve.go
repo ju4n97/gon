@@ -8,7 +8,8 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/go-chi/cors"
-	"github.com/mesatechlabs/kitten/internals/database"
+	dbsetup "github.com/mesatechlabs/gokit/internal/db"
+	db "github.com/mesatechlabs/gokit/internal/db/codegen"
 
 	"net/http"
 )
@@ -45,12 +46,15 @@ type ServeConfig struct {
 //	}
 //
 // Serve(config)
-func Serve(config ServeConfig) {
-	if err := database.CheckDatabaseConnection(); err != nil {
+func Serve(config *ServeConfig) {
+	err := dbsetup.NewDatabaseConnection(func(q *db.Queries) error {
+		return nil
+	})
+	if err != nil {
 		log.Fatal("Failed to connect to database: ", err)
 	}
 
-	if err := database.CheckDatabaseMigrations(); err != nil {
+	if err := dbsetup.NewDatabaseMigrations(); err != nil {
 		log.Fatal("Failed to apply database migrations: ", err)
 	}
 
@@ -62,7 +66,7 @@ func Serve(config ServeConfig) {
 		fmt.Println(string(bytes))
 	}
 
-	r := InitRouter(RouterConfig{
+	r := InitRouter(&RouterConfig{
 		Cors: cors.Options{
 			AllowedOrigins:   config.AllowedOrigins,
 			AllowedMethods:   config.AllowedMethods,

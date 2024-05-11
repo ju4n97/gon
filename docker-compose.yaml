@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   postgres:
@@ -7,16 +5,16 @@ services:
     container_name: postgres_container
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME:-kitten}
-      POSTGRES_USER: ${DB_USER:-root}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+      POSTGRES_DB: gokit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
     ports:
       - '5432:5432'
     volumes:
       - postgres:/var/lib/postgresql/data
-    env_file:
-      - .env
+    networks:
+      - postgres
 
   mailhog:
     image: 'mailhog/mailhog:latest'
@@ -25,6 +23,10 @@ services:
     ports:
       - '1025:1025' # SMTP Server
       - '8025:8025' # Web UI
+
+networks:
+  postgres:
+    driver: bridge
 
 volumes:
   postgres:

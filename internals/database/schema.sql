@@ -1,5 +1,0 @@
-CREATE TABLE todos (
-    id BIGSERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    completed BOOLEAN NOT NULL DEFAULT FALSE
-)

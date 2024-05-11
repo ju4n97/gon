@@ -1,4 +1,4 @@
-package database
+package dbsetup
 
 import (
 	"context"
@@ -7,9 +7,12 @@ import (
 
 	"ariga.io/atlas-go-sdk/atlasexec"
 	"github.com/jackc/pgx/v5"
+	db "github.com/mesatechlabs/gokit/internal/db/codegen"
 )
 
-func CheckDatabaseConnection() error {
+type DBAction func(*db.Queries) error
+
+func NewDatabaseConnection(action DBAction) error {
 	fmt.Println("Checking database connection...")
 
 	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URI"))
@@ -18,17 +21,17 @@ func CheckDatabaseConnection() error {
 	}
 	defer conn.Close(context.Background())
 
-	return nil
+	queries := db.New(conn)
+
+	return action(queries)
 }
 
-func CheckDatabaseMigrations() error {
+func NewDatabaseMigrations() error {
 	fmt.Println("Checking database migrations...")
 
-	// Define the execution context, supplying a migration directory
-	// and potentially an `atlas.hcl` configuration file using `atlasexec.WithHCL`
 	workdir, err := atlasexec.NewWorkingDir(
 		atlasexec.WithMigrations(
-			os.DirFS("./internals/database/migrations"),
+			os.DirFS("./internal/db/migrations"),
 		),
 	)
 	if err != nil {
@@ -36,7 +39,6 @@ func CheckDatabaseMigrations() error {
 	}
 	defer workdir.Close()
 
-	// Initialize the atlas client
 	client, err := atlasexec.NewClient(workdir.Path(), "atlas")
 	if err != nil {
 		return err
@@ -54,7 +56,6 @@ func CheckDatabaseMigrations() error {
 		return nil
 	}
 
-	// Run `atlas migrate apply` on the PostgreSQL database
 	res, err := client.MigrateApply(context.Background(), &atlasexec.MigrateApplyParams{
 		URL: os.Getenv("DATABASE_URI"),
 	})

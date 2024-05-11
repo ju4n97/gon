@@ -1,15 +1,23 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "internals/database/queries/"
-    schema: "internals/database/schema.sql"    
+    queries: "internal/db/queries/"
+    schema: "internal/db/schema.sql"    
     gen:
       go:
-        package: "database"
-        out: "internals/database/codegen"
-        sql_package: "pgx/v5"
-    database:
-      uri: "postgres://root:changeme@localhost:5432/kitten"
+        package: "db"
+        out: "internal/db/codegen"
+        sql_package: "pgx/v5"    
+        emit_db_tags: true
+        emit_json_tags: true    
+        emit_empty_slices: true
+        json_tags_case_style: "snake"
+        overrides:
+          # todos
+          - column: "todos.title"
+            go_struct_tag: 'validate:"required"'
+          - column: "todos.is_completed"
+            go_struct_tag: 'validate:"required"'
     rules:             
       - sqlc/db-prepare
       - no-exec

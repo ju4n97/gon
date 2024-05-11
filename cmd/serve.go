@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mesatechlabs/kitten/apis"
+	"github.com/mesatechlabs/gokit/apis"
 	"github.com/urfave/cli/v2"
 )
 
@@ -80,7 +80,7 @@ func NewServeCommand() *cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			apis.Serve(apis.ServeConfig{
+			apis.Serve(&apis.ServeConfig{
 				Port:           c.String("port"),
 				AllowedOrigins: c.StringSlice("allowed-origins"),
 				AllowedMethods: c.StringSlice("allowed-methods"),

@@ -3,11 +3,11 @@
 find . \
     \( \
     -name bun.lockb \
-    -o -name node_modules \
-    -o -name build \
-    -o -name dist \
     -o -name .svelte-kit \
     -o -name 'vite.config.ts.*' \
+    -o -type d -name node_modules \
+    -o -type d -name build \
+    -o -type d -name dist \
     \) \
     -exec rm -rf {} +
 

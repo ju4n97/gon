@@ -1,8 +1,8 @@
 [![Cybernetically enhanced web apps: kit](https://sveltejs.github.io/assets/banner.png)](https://svelte.dev)
 
 [![license](https://img.shields.io/npm/l/svelte.svg?style=flat-square)](LICENSE.md)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/MesaTechLabs/gokit?style=flat-square)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/MesaTechLabs/gokit/ci.yml?style=flat-square&label=CI)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/jm2097/gon?style=flat-square)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jm2097/gon/ci.yml?style=flat-square&label=CI)
 
 - [🌐 Visit live demo](#)
 - [📚 Read the docs](#)
@@ -91,12 +91,12 @@ This is a decidedly opinionated SvelteKit template, packed with modern technolog
 
 You have multiple options to start a new project based on this template:
 
-- [Create a GitHub repo from this template](https://github.com/MesaTechLabs/gokit/generate).
-- [Download the zip](https://github.com/MesaTechLabs/gokit/archive/refs/heads/master.zip) from the GitHub repository, which excludes the `.git` directory.
+- [Create a GitHub repo from this template](https://github.com/jm2097/gon/generate).
+- [Download the zip](https://github.com/jm2097/gon/archive/refs/heads/master.zip) from the GitHub repository, which excludes the `.git` directory.
 - Scaffold the project using [degit](https://github.com/Rich-Harris/degit).
 
   ```sh
-  bunx degit MesaTechLabs/gokit my-new-project
+  bunx degit jm2097/gon my-new-project
   ```
 
 Alternatively, you can fork it on StackBlitz, an online IDE:  

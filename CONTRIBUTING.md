@@ -10,7 +10,7 @@ This project encourages contributions from the community. You can contribute in 
 
 ### Feedback
 
-Contribute to the project's enhancement by sharing your insights and ideas. Open a [feature request issue](https://github.com/MesaTechLabs/gokit/issues/new?assignees=&labels=enhancement%2Ctriage&projects=&template=feature-request.yaml&title=%5BFeature%5D%3A+) to initiate dialogue.
+Contribute to the project's enhancement by sharing your insights and ideas. Open a [feature request issue](https://github.com/jm2097/gon/issues/new?assignees=&labels=enhancement%2Ctriage&projects=&template=feature-request.yaml&title=%5BFeature%5D%3A+) to initiate dialogue.
 
 ### Documentation
 
@@ -18,7 +18,7 @@ Participate in refining project documentation. Whether rectifying a typo, fixing
 
 ### Bug Discovery
 
-Contribute to project stability by identifying and reporting bugs. Before flagging an issue, [ensure it hasn't already been addressed](https://github.com/MesaTechLabs/gokit/issues). If untouched, seize the opportunity to address it yourself or leave it open for others to tackle.
+Contribute to project stability by identifying and reporting bugs. Before flagging an issue, [ensure it hasn't already been addressed](https://github.com/jm2097/gon/issues). If untouched, seize the opportunity to address it yourself or leave it open for others to tackle.
 
 ## Contribution Workflow
 
@@ -53,7 +53,7 @@ To ensure smooth collaboration and efficient handling of contributions, the cont
 
 ## Good First Issues
 
-If you're new to the codebase and seeking a starting point, consider checking out issues labeled [good first issue](https://github.com/MesaTechLabs/gokit/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+-label%3A%22blocked+by+upstream%22) since they should be relatively straightforward to work on. Before diving in, ensure there's no existing PR for the issue and that it hasn't been assigned to anyone yet. Once you've identified an issue you'd like to tackle, please notify the maintainers by commenting on the issue. This ensures proper coordination and prevents duplicate efforts.
+If you're new to the codebase and seeking a starting point, consider checking out issues labeled [good first issue](https://github.com/jm2097/gon/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+-label%3A%22blocked+by+upstream%22) since they should be relatively straightforward to work on. Before diving in, ensure there's no existing PR for the issue and that it hasn't been assigned to anyone yet. Once you've identified an issue you'd like to tackle, please notify the maintainers by commenting on the issue. This ensures proper coordination and prevents duplicate efforts.
 
 ## Changesets Workflow
 

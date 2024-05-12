@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/go-chi/render"
-	db "github.com/mesatechlabs/gokit/internal/db/codegen"
-	"github.com/mesatechlabs/gokit/tools/httperrors"
-	"github.com/mesatechlabs/gokit/tools/validators"
+	db "github.com/jm2097/gon/internal/db/codegen"
+	"github.com/jm2097/gon/tools/httperrors"
+	"github.com/jm2097/gon/tools/validators"
 )
 
 type TodosHandler struct {
@@ -20,12 +20,12 @@ func NewTodosHandler() *TodosHandler {
 	}
 }
 
-// TodoRequest defines the request payload for the Todo data model
+// TodoRequest defines the request payload for the Todo data model.
 type todosRequestPayload struct {
 	*db.CreateTodoParams
 }
 
-// TodoResponse defines the response payload for the Todo data model
+// TodoResponse defines the response payload for the Todo data model.
 type todosResponsePayload struct {
 	*db.Todo
 }
@@ -65,7 +65,7 @@ func (s *TodosHandler) CreateTodo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &todosRequestPayload{}
 		if err := render.Bind(r, data); err != nil {
-			render.Render(w, r, httperrors.NewBadRequest(err))
+			render.Render(w, r, httperrors.NewBadRequestError(err))
 			return
 		}
 
@@ -76,6 +76,10 @@ func (s *TodosHandler) CreateTodo() http.HandlerFunc {
 		}
 
 		render.Status(r, http.StatusCreated)
-		render.Render(w, r, newTodoPayloadResponse(newTodo))
+
+		if err := render.Render(w, r, newTodoPayloadResponse(newTodo)); err != nil {
+			render.Render(w, r, httperrors.NewInternalServerError(err))
+			return
+		}
 	}
 }

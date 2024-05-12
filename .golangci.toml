@@ -1,0 +1,92 @@
+[run]
+timeout = "5m"
+
+[linters]
+# https://golangci-lint.run/usage/linters
+disable-all = true
+enable = [
+  "asasalint",
+  "asciicheck",
+  "bidichk",
+  "bodyclose",
+  "dupword",
+  "durationcheck",
+  "errcheck",
+  "errname",
+  "exportloopref",
+  "fatcontext",
+  "forbidigo",
+  "gocognit",
+  "goconst",
+  "gocritic",
+  "gocyclo",
+  "godot",
+  "godox",
+  "gofmt",
+  "goimports",
+  "gomodguard",
+  "goprintffuncname",
+  "gosec",
+  "gosimple",
+  "gosmopolitan",
+  "govet",
+  "importas",
+  "importas",
+  "inamedparam",
+  "ineffassign",
+  "interfacebloat",
+  "loggercheck",
+  "maintidx",
+  "mirror",
+  "misspell",
+  "mnd",
+  "nakedret",
+  "nestif",
+  "nilerr",
+  "nilnil",
+  "noctx",
+  "nolintlint",
+  "paralleltest",
+  "perfsprint",
+  "prealloc",
+  "sqlclosecheck",
+  "staticcheck",
+  "tagalign",
+  "testpackage",
+  "typecheck",
+  "unconvert",
+  "unparam",
+  "unused",
+  "usestdlibvars",
+  "varnamelen",
+  "wastedassign",
+  "whitespace",
+  "wsl",
+]
+
+[linters-settings.mnd]
+checks = ["argument", "case", "condition", "operation", "return"]
+
+[linters-settings.errcheck]
+exclude-functions = [
+  "(net/http.ResponseWriter).Write",
+  "github.com/go-chi/render.Render",
+]
+
+[linters-settings.varnamelen]
+ignore-decls = [
+  "w http.ResponseWriter",
+  "r *http.Request",
+  "t *testing.T",
+  "e error",
+]
+
+[linters-settings.wsl]
+allow-cuddle-declarations = true
+
+[issues]
+exclude-dirs = ["internal/db/codegen"]
+
+[[issues.exclude-rules]]
+path = "_test\\.go"
+linters = ["gocritic", "gocyclo", "gosec", "govet", "noctx"]

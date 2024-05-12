@@ -3,24 +3,23 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/mesatechlabs/gokit/internal/config"
+	"github.com/jm2097/gon/internal/config"
 )
 
 func main() {
-	config.LoadEnv()
+	config.LoadConfigFromEnv()
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URI"))
+	conn, err := pgx.Connect(context.Background(), config.AppConfig.PostgresDsn)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer conn.Close(context.Background())
 
-	_, err = conn.Exec(context.Background(), "DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
-	if err != nil {
-		log.Fatal(err)
+	if _, err = conn.Exec(context.Background(), "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"); err != nil {
+		log.Panic(err)
 	}
 
 	log.Println("Database reset successfully")

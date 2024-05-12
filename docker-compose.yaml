@@ -5,7 +5,7 @@ services:
     container_name: postgres_container
     restart: unless-stopped
     environment:
-      POSTGRES_DB: gokit
+      POSTGRES_DB: gon
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres

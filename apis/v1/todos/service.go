@@ -3,9 +3,9 @@ package todosV1
 import (
 	"context"
 
-	dbsetup "github.com/mesatechlabs/gokit/internal/db"
-	db "github.com/mesatechlabs/gokit/internal/db/codegen"
-	"github.com/mesatechlabs/gokit/tools/pagination"
+	dbsetup "github.com/jm2097/gon/internal/db"
+	db "github.com/jm2097/gon/internal/db/codegen"
+	"github.com/jm2097/gon/tools/pagination"
 )
 
 type TodosService interface {
@@ -32,7 +32,8 @@ func (s *todosServiceImpl) GetTodos() (*pagination.OffsetPagination[db.Todo], er
 			return err
 		}
 
-		paginatedTodos = pagination.NewOffsetPagination(todos)
+		paginatedTodos = pagination.NewOffsetPagination(todos, len(todos), 1)
+
 		return nil
 	})
 	if err != nil {
@@ -50,6 +51,7 @@ func (s *todosServiceImpl) CreateTodo(data *db.CreateTodoParams) (*db.Todo, erro
 		if err != nil {
 			return err
 		}
+
 		insertedTodo = &todo
 
 		return nil

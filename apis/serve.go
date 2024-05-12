@@ -2,19 +2,18 @@ package apis
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/fatih/color"
 	"github.com/go-chi/cors"
-	dbsetup "github.com/mesatechlabs/gokit/internal/db"
-	db "github.com/mesatechlabs/gokit/internal/db/codegen"
+	dbsetup "github.com/jm2097/gon/internal/db"
+	db "github.com/jm2097/gon/internal/db/codegen"
 
 	"net/http"
 )
 
-// ServeConfig defines the configuration for the web server
+// ServeConfig defines the configuration for the web server.
 type ServeConfig struct {
 	// Port is the HTTP port to listen on (default: 3000)
 	Port string
@@ -45,7 +44,7 @@ type ServeConfig struct {
 //	    Port: "8080",
 //	}
 //
-// Serve(config)
+// Serve(config).
 func Serve(config *ServeConfig) {
 	err := dbsetup.NewDatabaseConnection(func(q *db.Queries) error {
 		return nil
@@ -61,12 +60,13 @@ func Serve(config *ServeConfig) {
 	if config.Verbose {
 		bytes, err := json.MarshalIndent(config, "", "  ")
 		if err != nil {
-			fmt.Println(err)
+			log.Default().Println(err)
 		}
-		fmt.Println(string(bytes))
+
+		log.Default().Println(string(bytes))
 	}
 
-	r := InitRouter(&RouterConfig{
+	router := InitRouter(&RouterConfig{
 		Cors: cors.Options{
 			AllowedOrigins:   config.AllowedOrigins,
 			AllowedMethods:   config.AllowedMethods,
@@ -75,16 +75,26 @@ func Serve(config *ServeConfig) {
 			MaxAge:           300,
 		},
 		Timeout: 60 * time.Second,
+		RateLimit: RouterConfigRateLimit{
+			RequestsLimit:  100,
+			RequestsWindow: 5 * time.Minute,
+		},
 	})
 
-	httpAddr := fmt.Sprintf("127.0.0.1:%s", config.Port)
+	httpAddr := "127.0.0.1:" + config.Port
 
 	c := color.New()
 	c.Printf("└─ REST API: %s\n", color.GreenString("http://%s/api", httpAddr))
 	c.Printf("   ├─ Health: %s\n", color.GreenString("http://%s/api/health", httpAddr))
 	c.Printf("   └─ v1: %s\n", color.GreenString("http://%s/api/v1", httpAddr))
 
-	if err := http.ListenAndServe(httpAddr, r); err != nil {
+	server := &http.Server{
+		Addr:              httpAddr,
+		Handler:           router,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+
+	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -1,0 +1,64 @@
+version: "3"
+
+vars:
+  DSN: "postgres://{{.DB_USER}}:{{.DB_PASSWORD}}@{{.DB_HOST}}:{{.DB_PORT}}/{{.DB_NAME}}?sslmode=disable"
+
+dotenv:
+  - ".env"
+
+tasks:
+  default:
+    desc: "Setup development environment"
+    cmds:
+      - task: install
+
+  install:
+    desc: "Install the project dependencies and tools required for development"
+    cmds:
+      - go mod download
+      - go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+      - go install github.com/cosmtrek/air@latest
+      - go install github.com/go-task/task/v3/cmd/task@latest
+      - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.1
+      - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+      - go install github.com/swaggo/swag/cmd/swag@latest
+
+  compose:up:
+    desc: "Start Docker containers"
+    cmd: docker-compose up -d
+
+  compose:down:
+    desc: "Stop Docker containers"
+    cmd: docker-compose down
+
+  dev:
+    desc: "Serve the development HTTP server with live reload"
+    cmd: go run main.go serve
+
+  lint:
+    cmds:
+      - golangci-lint run ./...
+
+  lint:fix:
+    cmds:
+      - golangci-lint run ./... --fix
+
+  test:
+    cmd: go test ./...
+
+  test:coverage:
+    cmds:
+      - go test ./... -v -race -cover -coverprofile=coverage.out
+      - go tool cover -html=coverage.out -o coverage.html
+
+  sqlc-generate:
+    cmds:
+      - docker run --rm -v "$(PWD):/src" -w /src sqlc/sqlc generate
+
+  sqlc-verify:
+    cmds:
+      - docker run --rm -v "$(PWD):/src" -w /src sqlc/sqlc verify
+
+  sqlc-vet:
+    cmds:
+      - docker run --rm -v "$(PWD):/src" -w /src sqlc/sqlc vet

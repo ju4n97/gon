@@ -9,17 +9,25 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
 	"github.com/go-chi/render"
-	"github.com/mesatechlabs/gokit/apis/health"
-	todosV1 "github.com/mesatechlabs/gokit/apis/v1/todos"
+	"github.com/jm2097/gon/apis/health"
+	todosV1 "github.com/jm2097/gon/apis/v1/todos"
 )
 
-// RouterConfig defines the configuration for the web server router
+// RouterConfig defines the configuration for the web server router.
 type RouterConfig struct {
 	// Timeout is the maximum duration to allow the request to complete before timing out
 	Timeout time.Duration
 
 	// Cors is the CORS options to use for the web server
 	Cors cors.Options
+
+	// RateLimit is the rate limit configuration for the web server
+	RateLimit RouterConfigRateLimit
+}
+
+type RouterConfigRateLimit struct {
+	RequestsLimit  int
+	RequestsWindow time.Duration
 }
 
 func InitRouter(config *RouterConfig) chi.Router {
@@ -33,7 +41,7 @@ func InitRouter(config *RouterConfig) chi.Router {
 		middleware.CleanPath,
 		middleware.Timeout(config.Timeout),
 		render.SetContentType(render.ContentTypeJSON),
-		httprate.LimitByIP(100, 1*time.Minute),
+		httprate.LimitByIP(config.RateLimit.RequestsLimit, config.RateLimit.RequestsWindow),
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {

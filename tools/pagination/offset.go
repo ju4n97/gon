@@ -23,16 +23,18 @@ type OffsetPaginationLinks struct {
 	Next     string `json:"next,omitempty"`
 }
 
-func NewOffsetPagination[T any](data []T) *OffsetPagination[T] {
-	pages := (100 + 10 - 1) / 10
+const DefaultPageSize = 10
+
+func NewOffsetPagination[T interface{}](data []T, total int, page int) *OffsetPagination[T] {
+	pages := calculatePages(total, DefaultPageSize)
 	count := len(data)
 
 	meta := &OffsetPaginationMeta{
-		Total:   100,
+		Total:   total,
 		Count:   count,
 		Pages:   pages,
-		Page:    1,
-		PerPage: 10,
+		Page:    page,
+		PerPage: DefaultPageSize,
 	}
 
 	links := &OffsetPaginationLinks{
@@ -49,10 +51,19 @@ func NewOffsetPagination[T any](data []T) *OffsetPagination[T] {
 	}
 }
 
+func calculatePages(total, pageSize int) int {
+	if total == 0 {
+		return 0
+	}
+
+	return (total + pageSize - 1) / pageSize
+}
+
 func max(a, b int) int {
 	if a > b {
 		return a
 	}
+
 	return b
 }
 
@@ -60,5 +71,6 @@ func min(a, b int) int {
 	if a < b {
 		return a
 	}
+
 	return b
 }

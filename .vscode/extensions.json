@@ -1,3 +1,9 @@
 {
-	"recommendations": ["svelte.svelte-vscode", "antfu.unocss", "inlang.vs-code-extension", "biomejs.biome"]
+	"recommendations": [
+		"svelte.svelte-vscode",
+		"antfu.unocss",
+		"inlang.vs-code-extension",
+		"biomejs.biome",
+		"tamasfe.even-better-toml"
+	]
 }

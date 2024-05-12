@@ -4,12 +4,16 @@ import (
 	"testing"
 
 	v10 "github.com/go-playground/validator/v10"
-	"github.com/mesatechlabs/gokit/tools/validators"
+	"github.com/jm2097/gon/tools/validators"
 )
 
 func TestValidatePort(t *testing.T) {
+	t.Parallel()
+
 	validate := v10.New(v10.WithRequiredStructEnabled())
-	validate.RegisterValidation("port", validators.ValidatePort)
+	if err := validate.RegisterValidation("port", validators.ValidatePort); err != nil {
+		t.Fatal(err)
+	}
 
 	tests := map[string]bool{
 		"8080":  true,

@@ -51,6 +51,7 @@ lib-cov
 # Coverage directory used by tools like istanbul
 
 coverage
+coverage*
 *.lcov
 
 # Playwright
@@ -207,3 +208,5 @@ dist
 **/vite.config.js.timestamp-*
 **/vite.config.ts.timestamp-*
 
+# Helper files at root directory
+/todo.md

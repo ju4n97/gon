@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-type ErrorResponse struct {
+type HttpResponseError struct {
 	Err error `json:"-"` // low-level runtime error
 
 	Status  int    `json:"status"`  // http status code
@@ -14,17 +14,18 @@ type ErrorResponse struct {
 	Message string `json:"message"` // user-level message
 }
 
-func (e *ErrorResponse) Error() string {
+func (e *HttpResponseError) Error() string {
 	return e.Message
 }
 
-func (e *ErrorResponse) Render(w http.ResponseWriter, r *http.Request) error {
+func (e *HttpResponseError) Render(w http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.Status)
+
 	return nil
 }
 
-func NewBadRequest(err error) render.Renderer {
-	return &ErrorResponse{
+func NewBadRequestError(err error) render.Renderer {
+	return &HttpResponseError{
 		Err:     err,
 		Status:  http.StatusBadRequest,
 		Code:    "bad_request",
@@ -32,8 +33,8 @@ func NewBadRequest(err error) render.Renderer {
 	}
 }
 
-func NewNotFound(err error) render.Renderer {
-	return &ErrorResponse{
+func NewNotFoundError(err error) render.Renderer {
+	return &HttpResponseError{
 		Err:     err,
 		Status:  http.StatusNotFound,
 		Code:    "not_found",
@@ -42,7 +43,7 @@ func NewNotFound(err error) render.Renderer {
 }
 
 func NewInternalServerError(err error) render.Renderer {
-	return &ErrorResponse{
+	return &HttpResponseError{
 		Err:     err,
 		Status:  http.StatusInternalServerError,
 		Code:    "internal_server_error",
@@ -50,8 +51,8 @@ func NewInternalServerError(err error) render.Renderer {
 	}
 }
 
-func NewUnauthorized(err error) render.Renderer {
-	return &ErrorResponse{
+func NewUnauthorizedError(err error) render.Renderer {
+	return &HttpResponseError{
 		Err:     err,
 		Status:  http.StatusUnauthorized,
 		Code:    "unauthorized",
@@ -59,8 +60,8 @@ func NewUnauthorized(err error) render.Renderer {
 	}
 }
 
-func NewForbidden(err error) render.Renderer {
-	return &ErrorResponse{
+func NewForbiddenError(err error) render.Renderer {
+	return &HttpResponseError{
 		Err:     err,
 		Status:  http.StatusForbidden,
 		Code:    "forbidden",
@@ -68,8 +69,8 @@ func NewForbidden(err error) render.Renderer {
 	}
 }
 
-func NewConflict(err error) render.Renderer {
-	return &ErrorResponse{
+func NewConflictError(err error) render.Renderer {
+	return &HttpResponseError{
 		Err:     err,
 		Status:  http.StatusConflict,
 		Code:    "conflict",

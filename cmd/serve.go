@@ -1,16 +1,15 @@
 package cmd
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/mesatechlabs/gokit/apis"
+	"github.com/jm2097/gon/apis"
 	"github.com/urfave/cli/v2"
 )
 
-// NewServeCommand returns a new CLI command that starts a web server
+// NewServeCommand returns a new CLI command that starts a web server.
 func NewServeCommand() *cli.Command {
 	defaultPort := 3000
 
@@ -42,7 +41,7 @@ func NewServeCommand() *cli.Command {
 
 	return &cli.Command{
 		Name:  "serve",
-		Usage: fmt.Sprintf("Starts a web HTTP server on http://127.0.0.1:%s", strconv.Itoa(defaultPort)),
+		Usage: "Starts a web HTTP server to serve requests",
 		Flags: []cli.Flag{
 			&cli.IntFlag{
 				Name:        "port",
@@ -79,14 +78,15 @@ func NewServeCommand() *cli.Command {
 				DefaultText: "false",
 			},
 		},
-		Action: func(c *cli.Context) error {
+		Action: func(ctx *cli.Context) error {
 			apis.Serve(&apis.ServeConfig{
-				Port:           c.String("port"),
-				AllowedOrigins: c.StringSlice("allowed-origins"),
-				AllowedMethods: c.StringSlice("allowed-methods"),
-				AllowedHeaders: c.StringSlice("allowed-headers"),
-				Verbose:        c.Bool("verbose"),
+				Port:           ctx.String("port"),
+				AllowedOrigins: ctx.StringSlice("allowed-origins"),
+				AllowedMethods: ctx.StringSlice("allowed-methods"),
+				AllowedHeaders: ctx.StringSlice("allowed-headers"),
+				Verbose:        ctx.Bool("verbose"),
 			})
+
 			return nil
 		},
 	}

@@ -51,14 +51,14 @@ tasks:
       - go test ./... -v -race -cover -coverprofile=coverage.out
       - go tool cover -html=coverage.out -o coverage.html
 
-  sqlc-generate:
+  sqlc:generate:
     cmds:
-      - docker run --rm -v "$(PWD):/src" -w /src sqlc/sqlc generate
+      - sqlc generate
 
-  sqlc-verify:
+  sqlc:verify:
     cmds:
-      - docker run --rm -v "$(PWD):/src" -w /src sqlc/sqlc verify
+      - sqlc verify
 
-  sqlc-vet:
+  sqlc:vet:
     cmds:
-      - docker run --rm -v "$(PWD):/src" -w /src sqlc/sqlc vet
+      - sqlc vet

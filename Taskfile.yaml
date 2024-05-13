@@ -23,6 +23,9 @@ tasks:
       - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
       - go install github.com/swaggo/swag/cmd/swag@latest
 
+  # ;--------;
+  # ; Docker ;
+  # ;--------;
   compose:up:
     desc: "Start Docker containers"
     cmd: docker-compose up -d
@@ -31,34 +34,53 @@ tasks:
     desc: "Stop Docker containers"
     cmd: docker-compose down
 
+  # ;-------------;
+  # ; Development ;
+  # ;-------------;
   dev:
     desc: "Serve the development HTTP server with live reload"
     cmd: go run main.go serve
 
+  # ;---------;
+  # ; Linting ;
+  # ;---------;
   lint:
+    desc: "Lint the project using golangci-lint"
     cmds:
       - golangci-lint run ./...
 
   lint:fix:
+    desc: "Lint the project using golangci-lint and fix any fixable issues"
     cmds:
       - golangci-lint run ./... --fix
 
+  # ;------------;
+  # ; Unit tests ;
+  # ;------------;
   test:
+    desc: "Run unit tests"
     cmd: go test ./...
 
   test:coverage:
+    desc: "Run unit tests and generate coverage report"
     cmds:
       - go test ./... -v -race -cover -coverprofile=coverage.out
       - go tool cover -html=coverage.out -o coverage.html
 
+  # ;------;
+  # ; sqlc ;
+  # ;------;
   sqlc:generate:
+    desc: "Generate source code from SQL"
     cmds:
       - sqlc generate
 
   sqlc:verify:
+    desc: "Verify schema, queries, and configuration for the project"
     cmds:
       - sqlc verify
 
   sqlc:vet:
+    desc: "Examine SQL queries for common mistakes (requires database connection)"
     cmds:
       - sqlc vet

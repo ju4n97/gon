@@ -23,7 +23,6 @@ enable = [
   "godot",
   "godox",
   "gofmt",
-  "goimports",
   "gomodguard",
   "goprintffuncname",
   "gosec",

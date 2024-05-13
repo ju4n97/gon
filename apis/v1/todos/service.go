@@ -3,8 +3,8 @@ package todosV1
 import (
 	"context"
 
+	"github.com/jm2097/gon/internal/codegen/db"
 	dbsetup "github.com/jm2097/gon/internal/db"
-	db "github.com/jm2097/gon/internal/db/codegen"
 	"github.com/jm2097/gon/tools/pagination"
 )
 

@@ -76,9 +76,9 @@ func setPostgresDsn(config *Config) {
 
 	AppConfig.PostgresDsn = fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s%s",
-		AppConfig.PostgresHost,
 		AppConfig.PostgresUser,
 		AppConfig.PostgresPassword,
+		AppConfig.PostgresHost,
 		AppConfig.PostgresPort,
 		AppConfig.PostgresDb,
 		dsnQuery,

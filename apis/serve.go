@@ -3,14 +3,13 @@ package apis
 import (
 	"encoding/json"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/fatih/color"
 	"github.com/go-chi/cors"
+	db "github.com/jm2097/gon/internal/codegen/db"
 	dbsetup "github.com/jm2097/gon/internal/db"
-	db "github.com/jm2097/gon/internal/db/codegen"
-
-	"net/http"
 )
 
 // ServeConfig defines the configuration for the web server.

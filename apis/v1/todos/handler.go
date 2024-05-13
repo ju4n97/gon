@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/render"
-	db "github.com/jm2097/gon/internal/db/codegen"
+	"github.com/jm2097/gon/internal/codegen/db"
 	"github.com/jm2097/gon/tools/httperrors"
 	"github.com/jm2097/gon/tools/validators"
 )

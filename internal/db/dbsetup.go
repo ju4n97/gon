@@ -2,22 +2,37 @@ package dbsetup
 
 import (
 	"context"
+	"embed"
+	"errors"
+	"fmt"
 	"log"
-	"os"
 
-	"ariga.io/atlas-go-sdk/atlasexec"
+	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jm2097/gon/internal/codegen/db"
 	"github.com/jm2097/gon/internal/config"
-	db "github.com/jm2097/gon/internal/db/codegen"
+	"github.com/pressly/goose/v3"
 )
 
-type DBAction func(*db.Queries) error
+//go:embed migrations/*.sql
+var embeddedMigrations embed.FS
 
-func NewDatabaseConnection(action DBAction) error {
+func NewDatabaseConnection(action func(*db.Queries) error) error {
 	log.Default().Println("Checking database connection...")
 
 	conn, err := pgx.Connect(context.Background(), config.AppConfig.PostgresDsn)
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == pgerrcode.InvalidCatalogName {
+				return handleInvalidCatalogName()
+			} else {
+				return err
+			}
+		}
+
 		return err
 	}
 
@@ -31,43 +46,48 @@ func NewDatabaseConnection(action DBAction) error {
 func NewDatabaseMigrations() error {
 	log.Default().Println("Checking database migrations...")
 
-	workdir, err := atlasexec.NewWorkingDir(
-		atlasexec.WithMigrations(
-			os.DirFS("./internal/db/migrations"),
+	goose.SetBaseFS(embeddedMigrations)
+
+	if err := goose.SetDialect("postgres"); err != nil {
+		return err
+	}
+
+	db, err := goose.OpenDBWithDriver("pgx", config.AppConfig.PostgresDsn)
+	if err != nil {
+		return err
+	}
+
+	defer db.Close()
+
+	if err := goose.Up(db, "migrations"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// handleInvalidCatalogName (3D000) creates a new database once is verified that the database does not exist.
+func handleInvalidCatalogName() error {
+	log.Default().Println("Database does not exist. Creating it...")
+
+	conn, err := pgx.Connect(
+		context.Background(),
+		fmt.Sprintf("host=%s user=%s password=%s",
+			config.AppConfig.PostgresHost,
+			config.AppConfig.PostgresUser,
+			config.AppConfig.PostgresPassword,
 		),
 	)
 	if err != nil {
 		return err
 	}
 
-	defer workdir.Close()
+	defer conn.Close(context.Background())
 
-	client, err := atlasexec.NewClient(workdir.Path(), "atlas")
+	_, err = conn.Exec(context.Background(), "CREATE DATABASE "+config.AppConfig.PostgresDb)
 	if err != nil {
 		return err
 	}
-
-	status, err := client.MigrateStatus(context.Background(), &atlasexec.MigrateStatusParams{
-		URL: os.Getenv("DATABASE_URI"),
-	})
-	if err != nil {
-		return err
-	}
-
-	if status.Status == "OK" {
-		log.Default().Printf("Database is up-to-date and no migrations need to be applied  (current version: %s\n)", status.Current)
-
-		return nil
-	}
-
-	res, err := client.MigrateApply(context.Background(), &atlasexec.MigrateApplyParams{
-		URL: os.Getenv("DATABASE_URI"),
-	})
-	if err != nil {
-		return err
-	}
-
-	log.Default().Printf("Applied %d migrations\n", len(res.Applied))
 
 	return nil
 }

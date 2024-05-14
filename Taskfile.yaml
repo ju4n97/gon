@@ -1,7 +1,7 @@
 version: "3"
 
 vars:
-  POSTGRES_DSN: "postgres://{{.POSTGRES_USER}}:{{.POSTGRES_PASSWORD}}@{{.POSTGRES_HOST}}:{{.POSTGRES_PORT}}/{{.POSTGRES_DB}}?sslmode=disable"
+  POSTGRES_DSN: "postgres://{{.POSTGRES_USER}}:{{.POSTGRES_PASSWORD}}@{{.POSTGRES_HOST}}:{{.POSTGRES_PORT}}/{{.POSTGRES_DBNAME}}?sslmode=disable"
   POSTGRES_CONTAINER: "postgres"
   MIGRATIONS_DIR: "./internal/db/migrations"
   DB_DIR_PATH: "./internal/db"
@@ -72,22 +72,22 @@ tasks:
 
   db:create:
     desc: "Create a local database instance"
-    cmd: docker exec -it {{.POSTGRES_CONTAINER}} psql -U {{.POSTGRES_USER}} -c "CREATE DATABASE {{.POSTGRES_DB}};"
+    cmd: docker exec -it {{.POSTGRES_CONTAINER}} psql -U {{.POSTGRES_USER}} -c "CREATE DATABASE {{.POSTGRES_DBNAME}};"
     requires:
       vars:
         - POSTGRES_CONTAINER
         - POSTGRES_USER
-        - POSTGRES_DB
+        - POSTGRES_DBNAME
 
   db:drop:
     prompt: "You'll lose all your data. Do you want to continue?"
     desc: "Drop the local database instance"
-    cmd: docker exec -it {{.POSTGRES_CONTAINER}} psql -U {{.POSTGRES_USER}} -c "DROP DATABASE IF EXISTS {{.POSTGRES_DB}};"
+    cmd: docker exec -it {{.POSTGRES_CONTAINER}} psql -U {{.POSTGRES_USER}} -c "DROP DATABASE IF EXISTS {{.POSTGRES_DBNAME}};"
     requires:
       vars:
         - POSTGRES_CONTAINER
         - POSTGRES_USER
-        - POSTGRES_DB
+        - POSTGRES_DBNAME
 
   db:recreate:
     prompt: "You'll lose all your data. Do you want to continue?"
@@ -172,7 +172,7 @@ tasks:
         - POSTGRES_DSN
 
   # ;------;
-  # ; sqlc ;
+  # ; SQLC ;
   # ;------;
   sqlc:generate:
     desc: "Generate source code from SQL"

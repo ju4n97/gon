@@ -1,4 +1,4 @@
-package tokens
+package generator
 
 import (
 	ung "github.com/sibiraj-s/unique-names-generator"

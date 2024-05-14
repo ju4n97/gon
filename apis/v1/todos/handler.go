@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/jm2097/gon/internal/codegen/db"
-	"github.com/jm2097/gon/tools/httperrors"
-	"github.com/jm2097/gon/tools/validators"
+	"github.com/jm2097/gon/tools/custom_error"
+	"github.com/jm2097/gon/tools/custom_validator"
 )
 
 type TodosHandler struct {
@@ -31,7 +31,7 @@ type todosResponsePayload struct {
 }
 
 func (p *todosRequestPayload) Bind(r *http.Request) error {
-	if err := validators.ValidateModel(p.CreateTodoParams); err != nil {
+	if err := custom_validator.ValidateModel(p.CreateTodoParams); err != nil {
 		return err.Error
 	}
 
@@ -65,20 +65,20 @@ func (s *TodosHandler) CreateTodo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &todosRequestPayload{}
 		if err := render.Bind(r, data); err != nil {
-			render.Render(w, r, httperrors.NewBadRequestError(err))
+			render.Render(w, r, custom_error.NewBadRequestError(err))
 			return
 		}
 
 		newTodo, err := s.todosService.CreateTodo(data.CreateTodoParams)
 		if err != nil {
-			render.Render(w, r, httperrors.NewInternalServerError(err))
+			render.Render(w, r, custom_error.NewInternalServerError(err))
 			return
 		}
 
 		render.Status(r, http.StatusCreated)
 
 		if err := render.Render(w, r, newTodoPayloadResponse(newTodo)); err != nil {
-			render.Render(w, r, httperrors.NewInternalServerError(err))
+			render.Render(w, r, custom_error.NewInternalServerError(err))
 			return
 		}
 	}

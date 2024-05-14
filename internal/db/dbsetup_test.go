@@ -1,1 +1,1 @@
-package dbsetup_test
+package dbsetup

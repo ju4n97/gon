@@ -67,6 +67,8 @@ This project uses [Goose](https://github.com/pressly/goose) for migrations. The 
     task migrate:down
     ```
 
+## SQLC workflow
+
 ## License
 
 [MIT](./LICENSE)

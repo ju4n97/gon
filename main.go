@@ -10,10 +10,18 @@ import (
 )
 
 func main() {
-	config.LoadConfigFromEnv()
+	factory, err := config.NewConfigLoaderFactory("env")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	config, err := factory.LoadConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	app := &cli.App{
-		Name:                 "gon",
+		Name:                 config.App.Name,
 		Usage:                "SvelteKit template powered by a Go backend",
 		Version:              "0.0.1",
 		EnableBashCompletion: true,

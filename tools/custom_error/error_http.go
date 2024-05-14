@@ -1,4 +1,4 @@
-package httperrors
+package custom_error
 
 import (
 	"net/http"
@@ -20,7 +20,6 @@ func (e *HttpResponseError) Error() string {
 
 func (e *HttpResponseError) Render(w http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.Status)
-
 	return nil
 }
 

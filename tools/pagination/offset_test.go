@@ -1,1 +1,1 @@
-package pagination_test
+package pagination

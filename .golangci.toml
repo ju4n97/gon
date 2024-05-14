@@ -51,7 +51,6 @@ enable = [
   "sqlclosecheck",
   "staticcheck",
   "tagalign",
-  "testpackage",
   "typecheck",
   "unconvert",
   "unparam",

@@ -4,7 +4,6 @@ import (
 	"context"
 	"embed"
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/jackc/pgerrcode"
@@ -19,10 +18,12 @@ import (
 //go:embed migrations/*.sql
 var embeddedMigrations embed.FS
 
-func NewDatabaseConnection(action func(*db.Queries) error) error {
+type QueryFunc func(*db.Queries) error
+
+func NewDatabaseConnection(queryFunc QueryFunc) error {
 	log.Default().Println("Checking database connection...")
 
-	conn, err := pgx.Connect(context.Background(), config.AppConfig.PostgresDsn)
+	conn, err := pgx.Connect(context.Background(), config.Global.Postgres.Dsn("host", "port", "user", "password", "dbname", "sslmode"))
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -36,11 +37,15 @@ func NewDatabaseConnection(action func(*db.Queries) error) error {
 		return err
 	}
 
-	defer conn.Close(context.Background())
+	defer func() {
+		if err := conn.Close(context.Background()); err != nil {
+			log.Default().Println(err)
+		}
+	}()
 
 	queries := db.New(conn)
 
-	return action(queries)
+	return queryFunc(queries)
 }
 
 func NewDatabaseMigrations() error {
@@ -52,7 +57,7 @@ func NewDatabaseMigrations() error {
 		return err
 	}
 
-	db, err := goose.OpenDBWithDriver("pgx", config.AppConfig.PostgresDsn)
+	db, err := goose.OpenDBWithDriver("pgx", config.Global.Postgres.Dsn("host", "port", "user", "password", "dbname", "sslmode"))
 	if err != nil {
 		return err
 	}
@@ -70,21 +75,14 @@ func NewDatabaseMigrations() error {
 func handleInvalidCatalogName() error {
 	log.Default().Println("Database does not exist. Creating it...")
 
-	conn, err := pgx.Connect(
-		context.Background(),
-		fmt.Sprintf("host=%s user=%s password=%s",
-			config.AppConfig.PostgresHost,
-			config.AppConfig.PostgresUser,
-			config.AppConfig.PostgresPassword,
-		),
-	)
+	conn, err := pgx.Connect(context.Background(), config.Global.Postgres.Dsn("host", "port", "user", "password"))
 	if err != nil {
 		return err
 	}
 
 	defer conn.Close(context.Background())
 
-	_, err = conn.Exec(context.Background(), "CREATE DATABASE "+config.AppConfig.PostgresDb)
+	_, err = conn.Exec(context.Background(), "CREATE DATABASE "+config.Global.Postgres.DBName)
 	if err != nil {
 		return err
 	}

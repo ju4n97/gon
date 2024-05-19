@@ -3,7 +3,7 @@
 
 <!-- markdownlint-disable MD033 -->
 <a href="https://gon.github.io">
-  <img src="./.github/assets/banner.png" alt="Gon banner" width="100%" height="200" style="object-fit: cover; margin-bottom: 1rem" />
+  <img src="./public/banner.png" alt="Gon banner" width="100%" height="200" style="object-fit: cover; margin-bottom: 1rem" />
 </a>
 
 <div align="center">

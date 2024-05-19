@@ -35,7 +35,7 @@ To ensure smooth collaboration and efficient handling of contributions, the cont
      - `needs revision`: Issues lacking necessary information or clarity.
      - `under review`: Issues pending further discussion or decision-making.
      - `wontfix`: Issues falling outside the project's scope and not planned for resolution.
-     - `BREAKING CHANGE`:  Issues that introduce significant alterations to the project's codebase or functionality, potentially breaking backward compatibility or requiring substantial reworking of existing implementations.
+     - `BREAKING CHANGE`: Issues that introduce significant alterations to the project's codebase or functionality, potentially breaking backward compatibility or requiring substantial reworking of existing implementations.
 3. **Volunteer Engagement**:
    - Issue authors or other volunteers express interest in resolving issues by offering solutions or volunteering for ownership.
 4. **Assignment**:
@@ -62,12 +62,15 @@ This project uses [Changesets](https://github.com/changesets/changesets) for pac
 The workflow looks as follows:
 
 1. **Implement Feature Adjustments**:
+
    - Make all necessary adjustments to the feature you are currently working on.
 
 2. **Generate Changesets**:
+
    - Use `bun changeset` to generate a changeset, following the provided instructions. Remember to classify changesets introducing new features as `minor`, while those addressing bugs should be marked as `patch`.
 
 3. **Commit with Changeset**:
+
    - Make a commit that encompasses all relevant adjustments, ensuring to include the generated changeset.
 
 4. **Submit Pull Request**:
@@ -78,4 +81,4 @@ The workflow looks as follows:
 
 ## License
 
-By contributing to this project, you agree to license your contributions under the project's  [license](./LICENSE).
+By contributing to this project, you agree to license your contributions under the project's [license](./LICENSE).

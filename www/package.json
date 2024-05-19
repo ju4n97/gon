@@ -1,0 +1,16 @@
+{
+  "name": "www",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "@iconify-json/carbon": "^1.1.33",
+    "@iconify-json/solar": "^1.1.9",
+    "unocss": "^0.60.2",
+    "vitepress": "^1.2.0"
+  }
+}

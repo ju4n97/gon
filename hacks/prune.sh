@@ -6,6 +6,7 @@ find . \
     -o -name .svelte-kit \
     -o -name 'vite.config.ts.*' \
     -o -type d -name node_modules \
+    -o -name d -name cache \
     -o -type d -name build \
     -o -type d -name dist \
     \) \

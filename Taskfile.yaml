@@ -27,6 +27,25 @@ tasks:
       - go install github.com/swaggo/swag/cmd/swag@latest
       - go install github.com/pressly/goose/v3/cmd/goose@latest
 
+  # ;-----------------------;
+  # ; Documentation website ;
+  # ;-----------------------;
+  www:install:
+    desc: "Install the dependencies for the documentation"
+    cmd: bun install --cwd www
+
+  www:dev:
+    desc: "Serve the documentation"
+    cmd: bun run --cwd www dev
+
+  www:build:
+    desc: "Build the documentation"
+    cmd: bun run --cwd www build
+
+  www:preview:
+    desc: "Preview the built documentation"
+    cmd: bun run --cwd www preview
+
   # ;-------------;
   # ; Development ;
   # ;-------------;
@@ -145,7 +164,7 @@ tasks:
 
   migrate:down:
     aliases: ["m:up-down"]
-    desc: "Rollback a single database migration from the current version"
+    desc: "Roll back a single database migration from the most recent version"
     cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} down
     requires:
       vars:
@@ -154,7 +173,7 @@ tasks:
 
   migrate:down-to:
     aliases: ["m:down-to"]
-    desc: "Rollback database migrations down to a specific version"
+    desc: "Roll back database migrations down to a specific version"
     cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} down-to {{.CLI_ARGS}}
     requires:
       vars:
@@ -164,7 +183,7 @@ tasks:
 
   migrate:reset:
     aliases: ["m:reset"]
-    desc: "Rollback all database migrations"
+    desc: "Roll back all database migrations"
     cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} reset
     requires:
       vars:
@@ -175,7 +194,7 @@ tasks:
   # ; SQLC ;
   # ;------;
   sqlc:generate:
-    desc: "Generate source code from SQL"
+    desc: "Generate Go source code from SQL files."
     cmds:
       - sqlc generate
 

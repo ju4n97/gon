@@ -2,7 +2,7 @@ services:
 
   postgres:
     image: postgres:alpine
-    container_name: postgres
+    container_name: gon-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: gon
@@ -18,7 +18,7 @@ services:
 
   mailhog:
     image: 'mailhog/mailhog:latest'
-    container_name: mailhog
+    container_name: gon-mailhog
     restart: unless-stopped
     ports:
       - '1025:1025' # SMTP Server

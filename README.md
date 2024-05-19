@@ -6,7 +6,7 @@
   <img src="./.github/assets/banner.png" alt="Gon banner" width="100%" height="200" style="object-fit: cover; margin-bottom: 1rem" />
 </a>
 
-<center>
+<div align="center">
    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jm2097/gon/ci.yaml">
    <img alt="GitHub License" src="https://img.shields.io/github/license/jm2097/gon">
 
@@ -25,7 +25,7 @@
          </tr>
       </tbody>
    </table>
-</center>
+</div>
 <!-- markdownlint-enable MD033 -->
 
 ## What is Gon?

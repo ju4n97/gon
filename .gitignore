@@ -207,6 +207,3 @@ dist
 **/.svelte-kit
 **/vite.config.js.timestamp-*
 **/vite.config.ts.timestamp-*
-
-# Helper files at root directory
-/todo.md

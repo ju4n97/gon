@@ -51,7 +51,7 @@ tasks:
   # ;-------------;
   dev:
     desc: "Serve the development HTTP server"
-    cmd: go run main.go serve
+    cmd: air
 
   # ;---------;
   # ; Linting ;

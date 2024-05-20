@@ -7,6 +7,7 @@
 - [] Find a way to implement REST, GraphQL, and gRPC at the same time with opt-in functionality.
 - [] Implement feature-flags
 - [] Headless CMS
+- [] Check out goreleaser
 
 ## Integrations
 

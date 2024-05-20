@@ -56,7 +56,7 @@ func NewZeroLogger() Logger {
 
 	multi := io.MultiWriter(writers...)
 
-	zl := zerolog.New(multi).With().Timestamp().Caller().Logger()
+	zl := zerolog.New(multi).With().Str("app", config.Global.App.Name).Str("env", string(config.Global.App.Env)).Timestamp().Logger()
 
 	Log = &ZeroLogger{logger: zl}
 

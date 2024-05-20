@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/go-chi/cors"
 	db "github.com/jm2097/gon/internal/codegen/db"
 	"github.com/jm2097/gon/internal/config"
 	dbsetup "github.com/jm2097/gon/internal/db"
@@ -25,20 +24,7 @@ func Serve() {
 		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to run database migrations")
 	}
 
-	router := InitRouter(&RouterConfig{
-		Cors: cors.Options{
-			AllowedOrigins:   config.Global.Server.AllowedOrigins,
-			AllowedMethods:   config.Global.Server.AllowedMethods,
-			AllowedHeaders:   config.Global.Server.AllowedHeaders,
-			AllowCredentials: false,
-			MaxAge:           300,
-		},
-		Timeout: 60 * time.Second,
-		RateLimit: RouterConfigRateLimit{
-			RequestsLimit:  100,
-			RequestsWindow: 5 * time.Minute,
-		},
-	})
+	router := NewRouter()
 
 	httpAddr := config.Global.Server.Host + ":" + strconv.Itoa(config.Global.Server.Port)
 	fullHttpAddr := "http://" + httpAddr
@@ -54,7 +40,7 @@ func Serve() {
 		ReadHeaderTimeout: 3 * time.Second,
 	}
 
-	if err := server.ListenAndServe(); err != nil {
+	if err := router.StartServer(server); err != nil {
 		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to start the server")
 	}
 }

@@ -2,60 +2,73 @@ package apis
 
 import (
 	"net/http"
-	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/cors"
-	"github.com/go-chi/httprate"
-	"github.com/go-chi/render"
-	"github.com/jm2097/gon/apis/health"
-	todosV1 "github.com/jm2097/gon/apis/v1/todos"
+	v1 "github.com/jm2097/gon/apis/v1"
+	"github.com/jm2097/gon/internal/config"
+	"github.com/jm2097/gon/tools/logger"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-// RouterConfig defines the configuration for the web server router.
-type RouterConfig struct {
-	// Timeout is the maximum duration to allow the request to complete before timing out
-	Timeout time.Duration
+func NewRouter() *echo.Echo {
+	e := echo.New()
+	e.HideBanner = true
+	e.HidePort = true
 
-	// Cors is the CORS options to use for the web server
-	Cors cors.Options
+	e.Pre(middleware.RemoveTrailingSlash())
 
-	// RateLimit is the rate limit configuration for the web server
-	RateLimit RouterConfigRateLimit
-}
+	e.Use(middleware.Recover())
+	e.Use(middleware.RequestID())
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogRequestID: true,
+		LogProtocol:  true,
+		LogHost:      true,
+		LogRemoteIP:  true,
+		LogUserAgent: true,
+		LogMethod:    true,
+		LogURI:       true,
+		LogStatus:    true,
+		LogLatency:   true,
+		LogError:     true,
+		LogValuesFunc: func(c echo.Context, req middleware.RequestLoggerValues) error {
+			fields := logger.Fields{
+				"requestID": req.RequestID,
+				"protocol":  req.Protocol,
+				"host":      req.Host,
+				"ip":        req.RemoteIP,
+				"ua":        req.UserAgent,
+				"method":    req.Method,
+				"uri":       req.URI,
+				"status":    req.Status,
+				"latency":   req.Latency,
+			}
 
-type RouterConfigRateLimit struct {
-	RequestsLimit  int
-	RequestsWindow time.Duration
-}
+			if req.Error != nil {
+				fields["error"] = req.Error.Error()
+				logger.Log.Error().WithFields(fields).Msg("Request failed with error")
+			} else {
+				logger.Log.Info().WithFields(fields).Msg("Request accepted")
+			}
 
-func InitRouter(config *RouterConfig) chi.Router {
-	router := chi.NewRouter()
+			return nil
+		},
+	}))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: config.Global.Server.AllowedOrigins,
+		AllowMethods: config.Global.Server.AllowedMethods,
+		AllowHeaders: config.Global.Server.AllowedHeaders,
+	}))
+	// e.Use(middleware.Timeout())
+	// e.Use(middleware.RateLimiter(&middleware.RateLimiterMemoryStore{}))
 
-	router.Use(
-		cors.Handler(config.Cors),
-		middleware.RequestID,
-		middleware.Logger,
-		middleware.Recoverer,
-		middleware.CleanPath,
-		middleware.Timeout(config.Timeout),
-		render.SetContentType(render.ContentTypeJSON),
-		httprate.LimitByIP(config.RateLimit.RequestsLimit, config.RateLimit.RequestsWindow),
-	)
-
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, friend"))
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, friend")
 	})
 
-	router.Route("/api", func(r chi.Router) {
-		r.Mount("/health", health.NewHealthCheckRouter())
+	api := e.Group("/api")
 
-		// API version 1
-		r.Route("/v1", func(r chi.Router) {
-			r.Mount("/todos", todosV1.NewTodosRouter())
-		})
-	})
+	v1.NewGroup(api)
+	// v2.NewGroup(api) // Uncomment this line if you have a v2 group
 
-	return router
+	return e
 }

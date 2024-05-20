@@ -18,11 +18,11 @@ func main() {
 
 	currentContent, err := os.ReadFile(filePath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to read file: %s", err)
 	}
 
 	newContent := append([]byte(comment), currentContent...)
 	if err = os.WriteFile(filePath, newContent, os.ModePerm); err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to write file: %s", err)
 	}
 }

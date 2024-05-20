@@ -21,7 +21,7 @@ type Config struct {
 	App      AppConfig
 	Server   ServerConfig
 	Postgres PostgresConfig
-	Logs     LogsConfig
+	Logger   LoggerConfig
 }
 
 type ConfigLoader interface {
@@ -52,12 +52,17 @@ type PostgresConfig struct {
 	SslMode  string `validate:"omitempty,oneof=disable allow prefer require verify-ca verify-full"`
 }
 
-type LogsConfig struct {
-	IsEnabled   bool    `validate:"omitempty,boolean"`
-	File        string  `validate:"omitempty"`
-	MaxSizeInMb float32 `validate:"omitempty,gt=0"`
-	MaxAge      int     `validate:"omitempty,gt=0"` // in days
-	MaxBackups  int     `validate:"omitempty,gt=0"`
+type LoggerConfig struct {
+	IsWriteToStdoutEnabled   bool     `validate:"omitempty"`
+	IsWriteToFileEnabled     bool     `validate:"omitempty"`
+	MinLevel                 string   `validate:"omitempty,oneof=debug info warn error fatal panic"`
+	FilePath                 string   `validate:"omitempty"`
+	FileMaxSize              int      `validate:"omitempty,gt=0"` // in megabytes
+	FileMaxAge               int      `validate:"omitempty,gt=0"` // in days
+	FileMaxBackups           int      `validate:"omitempty,gt=0"`
+	IsFileLocalTimeEnabled   bool     `validate:"omitempty"`
+	IsFileCompressionEnabled bool     `validate:"omitempty"`
+	PrettyPrintEnvironments  []string `validate:"dive,omitempty,oneof=dev test prod"`
 }
 
 func (c *Config) Validate() error {

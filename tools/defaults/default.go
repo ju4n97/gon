@@ -42,9 +42,15 @@ const (
 )
 
 const (
-	LogsEnabled     = true
-	LogsFile        = "logs/app.log"
-	LogsMaxSizeInMb = 10 // megabytes
-	LogsMaxAge      = 7  // days
-	LogsMaxBackups  = 3
+	LoggerWriteToStdoutEnabled = true
+	LoggerWriteToFileEnabled   = false
+	LoggerMinLevel             = "debug"
+	LoggerFilePath             = "logs/app.log"
+	LoggerMaxSize              = 10 // in megabytes
+	LoggerMaxAge               = 7  // in days
+	LoggerMaxBackups           = 3
+	LoggerLocalTimeEnabled     = false
+	LoggerCompressionEnabled   = false
 )
+
+var LoggerPrettyPrintEnvironments = []string{"dev", "test"}

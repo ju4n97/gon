@@ -6,19 +6,23 @@ import (
 
 	"github.com/jm2097/gon/cmd"
 	"github.com/jm2097/gon/internal/config"
+	"github.com/jm2097/gon/tools/logger"
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	factory, err := config.NewConfigLoaderFactory("env")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to create config loader factory: %s", err)
 	}
 
 	config, err := factory.LoadConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to load config: %s", err)
 	}
+
+	logger.Log = logger.NewZeroLogger()
+	logger.Log.Info().WithFields(logger.Fields{"env": config.App.Env}).Msg("Starting " + config.App.Name)
 
 	app := &cli.App{
 		Name:                 config.App.Name,
@@ -31,6 +35,6 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		logger.Log.Error().WithFields(logger.Fields{"error": err}).Msg("Failed to start the application")
 	}
 }

@@ -45,7 +45,7 @@ func InitRouter(config *RouterConfig) chi.Router {
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, my friend"))
+		w.Write([]byte("Hello, friend"))
 	})
 
 	router.Route("/api", func(r chi.Router) {

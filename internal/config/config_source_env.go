@@ -36,12 +36,17 @@ func (l *EnvConfigLoader) LoadConfig() (*Config, error) {
 			DBName:   env.New("POSTGRES_DBNAME").MustToString(),
 			SslMode:  env.New("POSTGRES_SSL_MODE").MustToString(),
 		},
-		Logs: LogsConfig{
-			IsEnabled:   env.New("LOGS_ENABLED").WithDefault(defaults.LogsEnabled).MustToBool(),
-			File:        env.New("LOGS_FILE").WithDefault(defaults.LogsFile).MustToString(),
-			MaxSizeInMb: env.New("LOGS_MAX_SIZE_IN_MB").WithDefault(defaults.LogsMaxSizeInMb).MustToFloat32(),
-			MaxAge:      env.New("LOGS_MAX_AGE").WithDefault(defaults.LogsMaxAge).MustToInt(),
-			MaxBackups:  env.New("LOGS_MAX_BACKUPS").WithDefault(defaults.LogsMaxBackups).MustToInt(),
+		Logger: LoggerConfig{
+			IsWriteToStdoutEnabled:   env.New("LOGGER_TO_STDOUT_ENABLED").WithDefault(defaults.LoggerWriteToStdoutEnabled).MustToBool(),
+			IsWriteToFileEnabled:     env.New("LOGGER_TO_FILE_ENABLED").WithDefault(defaults.LoggerWriteToStdoutEnabled).MustToBool(),
+			MinLevel:                 env.New("LOGGER_MIN_LEVEL").WithDefault(defaults.LoggerMinLevel).MustToString(),
+			FilePath:                 env.New("LOGGER_FILE_PATH").WithDefault(defaults.LoggerFilePath).MustToString(),
+			FileMaxSize:              env.New("LOGGER_FILE_MAX_SIZE_IN_MB").WithDefault(defaults.LoggerMaxSize).MustToInt(),
+			FileMaxAge:               env.New("LOGGER_FILE_MAX_AGE").WithDefault(defaults.LoggerMaxAge).MustToInt(),
+			FileMaxBackups:           env.New("LOGGER_FILE_MAX_BACKUPS").WithDefault(defaults.LoggerMaxBackups).MustToInt(),
+			IsFileLocalTimeEnabled:   env.New("LOGGER_FILE_LOCAL_TIME_ENABLED").WithDefault(defaults.LoggerLocalTimeEnabled).MustToBool(),
+			IsFileCompressionEnabled: env.New("LOGGER_FILE_COMPRESS_ENABLED").WithDefault(defaults.LoggerCompressionEnabled).MustToBool(),
+			PrettyPrintEnvironments:  env.New("LOGGER_PRETTY_PRINT_ENVIRONMENTS").WithDefault(defaults.LoggerPrettyPrintEnvironments).MustToStringSlice(","),
 		},
 	}
 

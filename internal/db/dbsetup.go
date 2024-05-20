@@ -5,6 +5,7 @@ import (
 	"embed"
 	"errors"
 	"log"
+	"path"
 
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
@@ -12,6 +13,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jm2097/gon/internal/codegen/db"
 	"github.com/jm2097/gon/internal/config"
+	"github.com/jm2097/gon/tools/logger"
 	"github.com/pressly/goose/v3"
 )
 
@@ -21,7 +23,7 @@ var embeddedMigrations embed.FS
 type QueryFunc func(*db.Queries) error
 
 func NewDatabaseConnection(queryFunc QueryFunc) error {
-	log.Default().Println("Checking database connection...")
+	logger.Log.Info().Msg("Checking database connection...")
 
 	conn, err := pgx.Connect(context.Background(), config.Global.Postgres.Dsn("host", "port", "user", "password", "dbname", "sslmode"))
 	if err != nil {
@@ -49,7 +51,7 @@ func NewDatabaseConnection(queryFunc QueryFunc) error {
 }
 
 func NewDatabaseMigrations() error {
-	log.Default().Println("Checking database migrations...")
+	logger.Log.Info().Msg("Checking database migrations...")
 
 	goose.SetBaseFS(embeddedMigrations)
 
@@ -64,7 +66,7 @@ func NewDatabaseMigrations() error {
 
 	defer db.Close()
 
-	if err := goose.Up(db, "migrations"); err != nil {
+	if err := goose.Up(db, path.Join("migrations")); err != nil {
 		return err
 	}
 
@@ -73,7 +75,7 @@ func NewDatabaseMigrations() error {
 
 // handleInvalidCatalogName (3D000) creates a new database once is verified that the database does not exist.
 func handleInvalidCatalogName() error {
-	log.Default().Println("Database does not exist. Creating it...")
+	logger.Log.Warn().Msg("Database does not exist. Creating it...")
 
 	conn, err := pgx.Connect(context.Background(), config.Global.Postgres.Dsn("host", "port", "user", "password"))
 	if err != nil {

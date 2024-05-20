@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -11,6 +10,7 @@ import (
 	db "github.com/jm2097/gon/internal/codegen/db"
 	"github.com/jm2097/gon/internal/config"
 	dbsetup "github.com/jm2097/gon/internal/db"
+	"github.com/jm2097/gon/tools/logger"
 )
 
 func Serve() {
@@ -18,11 +18,11 @@ func Serve() {
 		return nil
 	})
 	if err != nil {
-		log.Fatal("Failed to connect to database: ", err)
+		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to connect to the database")
 	}
 
 	if err := dbsetup.NewDatabaseMigrations(); err != nil {
-		log.Fatal("Failed to apply database migrations: ", err)
+		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to run database migrations")
 	}
 
 	router := InitRouter(&RouterConfig{
@@ -55,6 +55,6 @@ func Serve() {
 	}
 
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatal(err)
+		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to start the server")
 	}
 }

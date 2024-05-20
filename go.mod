@@ -14,7 +14,7 @@ require (
 	github.com/pressly/goose/v3 v3.20.0
 	github.com/rs/zerolog v1.32.0
 	github.com/sibiraj-s/unique-names-generator v0.2.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/urfave/cli/v2 v2.27.2
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )

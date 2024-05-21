@@ -4,7 +4,6 @@ import (
 	"context"
 	"embed"
 	"errors"
-	"log"
 	"path"
 
 	"github.com/jackc/pgerrcode"
@@ -23,8 +22,6 @@ var embeddedMigrations embed.FS
 type QueryFunc func(*db.Queries) error
 
 func NewDatabaseConnection(queryFunc QueryFunc) error {
-	logger.Log.Info().Msg("Checking database connection...")
-
 	conn, err := pgx.Connect(context.Background(), config.Global.Postgres.Dsn("host", "port", "user", "password", "dbname", "sslmode"))
 	if err != nil {
 		var pgErr *pgconn.PgError
@@ -41,7 +38,7 @@ func NewDatabaseConnection(queryFunc QueryFunc) error {
 
 	defer func() {
 		if err := conn.Close(context.Background()); err != nil {
-			log.Default().Println(err)
+			logger.Log.Error().WithFields(logger.Fields{"error": err}).Msg("Failed to close database connection")
 		}
 	}()
 
@@ -51,8 +48,6 @@ func NewDatabaseConnection(queryFunc QueryFunc) error {
 }
 
 func NewDatabaseMigrations() error {
-	logger.Log.Info().Msg("Checking database migrations...")
-
 	goose.SetBaseFS(embeddedMigrations)
 
 	if err := goose.SetDialect("postgres"); err != nil {
@@ -75,7 +70,7 @@ func NewDatabaseMigrations() error {
 
 // handleInvalidCatalogName (3D000) creates a new database once is verified that the database does not exist.
 func handleInvalidCatalogName() error {
-	logger.Log.Warn().Msg("Database does not exist. Creating it...")
+	logger.Log.Info().Msg("Database does not exist. Creating it...")
 
 	conn, err := pgx.Connect(context.Background(), config.Global.Postgres.Dsn("host", "port", "user", "password"))
 	if err != nil {

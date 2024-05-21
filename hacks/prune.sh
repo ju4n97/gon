@@ -7,6 +7,8 @@ find . \
     -o -name 'vite.config.ts.*' \
     -o -type d -name node_modules \
     -o -name d -name cache \
+    -o -name d -name tmp \
+    -o -name d -name logs \
     -o -type d -name build \
     -o -type d -name dist \
     \) \

@@ -23,7 +23,7 @@ func NewTodosService() TodosService {
 func (s *todosServiceImpl) GetTodos() (*pagination.OffsetPagination[db.Todo], error) {
 	var paginatedTodos *pagination.OffsetPagination[db.Todo]
 
-	err := dbsetup.NewDatabaseConnection(func(q *db.Queries) error {
+	if err := dbsetup.NewDatabaseConnection(func(q *db.Queries) error {
 		todos, err := q.ListTodos(context.Background(), db.ListTodosParams{
 			Limit:  10,
 			Offset: 0,
@@ -35,8 +35,7 @@ func (s *todosServiceImpl) GetTodos() (*pagination.OffsetPagination[db.Todo], er
 		paginatedTodos = pagination.NewOffsetPagination(todos, len(todos), 1)
 
 		return nil
-	})
-	if err != nil {
+	}); err != nil {
 		return nil, err
 	}
 
@@ -46,7 +45,7 @@ func (s *todosServiceImpl) GetTodos() (*pagination.OffsetPagination[db.Todo], er
 func (s *todosServiceImpl) CreateTodo(data *db.CreateTodoParams) (*db.Todo, error) {
 	var insertedTodo *db.Todo
 
-	err := dbsetup.NewDatabaseConnection(func(q *db.Queries) error {
+	if err := dbsetup.NewDatabaseConnection(func(q *db.Queries) error {
 		todo, err := q.CreateTodo(context.Background(), *data)
 		if err != nil {
 			return err
@@ -55,8 +54,7 @@ func (s *todosServiceImpl) CreateTodo(data *db.CreateTodoParams) (*db.Todo, erro
 		insertedTodo = &todo
 
 		return nil
-	})
-	if err != nil {
+	}); err != nil {
 		return nil, err
 	}
 

@@ -26,7 +26,7 @@ func main() {
 
 	app := &cli.App{
 		Name:                 config.App.Name,
-		Usage:                "SvelteKit template powered by a Go backend",
+		Usage:                "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 		Version:              "0.0.1",
 		EnableBashCompletion: true,
 		Commands: []*cli.Command{

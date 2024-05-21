@@ -8,6 +8,7 @@
 - [] Implement feature-flags
 - [] Headless CMS
 - [] Check out goreleaser
+- [] Add project version to the logs
 
 ## Integrations
 

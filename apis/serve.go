@@ -6,33 +6,21 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	db "github.com/jm2097/gon/internal/codegen/db"
+	"github.com/jm2097/gon/internal/codegen/db"
 	"github.com/jm2097/gon/internal/config"
 	dbsetup "github.com/jm2097/gon/internal/db"
 	"github.com/jm2097/gon/tools/logger"
+	"github.com/labstack/echo/v4"
 )
 
 func Serve() {
-	err := dbsetup.NewDatabaseConnection(func(q *db.Queries) error {
-		return nil
-	})
-	if err != nil {
-		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to connect to the database")
-	}
-
-	if err := dbsetup.NewDatabaseMigrations(); err != nil {
-		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to run database migrations")
-	}
+	checkDatabase()
 
 	router := NewRouter()
 
 	httpAddr := config.Global.Server.Host + ":" + strconv.Itoa(config.Global.Server.Port)
-	fullHttpAddr := "http://" + httpAddr
 
-	c := color.New()
-	c.Printf("└─ REST API: %s\n", color.GreenString(fullHttpAddr+"/api"))
-	c.Printf("   ├─ Health: %s\n", color.GreenString(fullHttpAddr+"/health"))
-	c.Printf("   └─ v1: %s\n", color.GreenString(fullHttpAddr+"/api/v1"))
+	printRoutes("http://"+httpAddr, router.Routes())
 
 	server := &http.Server{
 		Addr:              httpAddr,
@@ -42,5 +30,36 @@ func Serve() {
 
 	if err := router.StartServer(server); err != nil {
 		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to start the server")
+	}
+}
+
+func checkDatabase() {
+	logger.Log.Info().Msg("Checking database connection...")
+
+	err := dbsetup.NewDatabaseConnection(func(q *db.Queries) error {
+		return nil
+	})
+	if err != nil {
+		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to connect to the database")
+	}
+
+	logger.Log.Info().Msg("Checking database migrations...")
+
+	if err := dbsetup.NewDatabaseMigrations(); err != nil {
+		logger.Log.Fatal().WithFields(logger.Fields{"error": err}).Msg("Failed to run database migrations")
+	}
+}
+
+func printRoutes(httpAddr string, routes []*echo.Route) {
+	c := color.New()
+	c.Printf("└─ REST API\n")
+
+	for idx, route := range routes {
+		threeSymbol := "  ├─"
+		if idx == len(routes)-1 {
+			threeSymbol = "  └─"
+		}
+
+		c.Printf("%s %s: %s\n", threeSymbol, color.MagentaString(route.Method), color.GreenString(httpAddr+route.Path))
 	}
 }

@@ -12,7 +12,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/pressly/goose/v3 v3.20.0
-	github.com/rs/zerolog v1.32.0
+	github.com/rs/zerolog v1.33.0
 	github.com/sibiraj-s/unique-names-generator v0.2.1
 	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.27.2

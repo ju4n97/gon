@@ -1,0 +1,39 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "internal/db/queries/"
+    schema: "internal/db/migrations/"
+    gen:
+      go:
+        package: "db"
+        out: "internal/codegen/db"
+        sql_package: "pgx/v5"
+        emit_db_tags: true
+        emit_json_tags: true
+        emit_empty_slices: true
+        json_tags_case_style: "snake"
+        overrides:
+          # todos
+          - column: "todos.title"
+            go_struct_tag: 'validate:"required"'
+          - column: "todos.is_completed"
+            go_struct_tag: 'validate:"required"'
+    rules:
+      - sqlc/db-prepare
+      - no-exec
+      - postgresql-query-too-costly
+      - postgresql-no-seq-scan
+
+rules:
+  - name: no-exec
+    message: "Avoid using exec due to potential SQL injection risks, performance issues, and debugging difficulties."
+    rule: |
+      query.cmd == "exec"
+
+  - name: postgresql-query-too-costly
+    message: "The estimated cost of your query is high, indicating it may consume significant resources. Consider optimizing your query for better performance."
+    rule: "postgresql.explain.plan.total_cost > 1.0"
+
+  - name: postgresql-no-seq-scan
+    message: "Your query results in a sequential scan, which can be resource-intensive. Consider adding an index to improve query performance."
+    rule: "postgresql.explain.plan.node_type == 'Seq Scan'"

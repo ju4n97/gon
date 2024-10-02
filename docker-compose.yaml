@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: gon-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gon
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:

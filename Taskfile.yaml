@@ -1,0 +1,190 @@
+version: "3"
+
+vars:
+  POSTGRES_DSN: "postgres://{{.POSTGRES_USER}}:{{.POSTGRES_PASSWORD}}@{{.POSTGRES_HOST}}:{{.POSTGRES_PORT}}/{{.POSTGRES_DBNAME}}?sslmode=disable"
+  POSTGRES_CONTAINER: "postgres"
+  MIGRATIONS_DIR: "./internal/db/migrations"
+  DB_DIR_PATH: "./internal/db"
+
+dotenv:
+  - ".env"
+
+tasks:
+  default:
+    desc: "Setup development environment"
+    cmds:
+      - task: install
+
+  install:
+    desc: "Install the project dependencies and tools required for development"
+    cmds:
+      - go mod tidy
+      - go mod download
+      - go install github.com/cosmtrek/air@latest
+      - go install github.com/go-task/task/v3/cmd/task@latest
+      - go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.1
+      - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+      - go install github.com/swaggo/swag/cmd/swag@latest
+      - go install github.com/pressly/goose/v3/cmd/goose@latest
+
+  # ;-------------;
+  # ; Development ;
+  # ;-------------;
+  dev:
+    desc: "Serve the development HTTP server"
+    cmd: air
+
+  # ;---------;
+  # ; Linting ;
+  # ;---------;
+  lint:
+    desc: "Lint the project using golangci-lint"
+    cmds:
+      - golangci-lint run ./...
+
+  lint:fix:
+    desc: "Lint the project using golangci-lint and fix any fixable issues"
+    cmds:
+      - golangci-lint run ./... --fix
+
+  # ;------------;
+  # ; Unit tests ;
+  # ;------------;
+  test:
+    desc: "Run unit tests"
+    cmd: go test ./...
+
+  test:coverage:
+    desc: "Run unit tests and generate coverage report"
+    cmds:
+      - go test ./... -v -race -cover -coverprofile=coverage.out
+      - go tool cover -html=coverage.out -o coverage.html
+
+  # ;----------;
+  # ; Database ;
+  # ;----------;
+  db:docs:
+    desc: "Generate database documentation"
+    cmds:
+      - npx -p @dbml/cli sql2dbml --postgres {{.DB_DIR_PATH}}/schema.sql -o {{.DB_DIR_PATH}}/schema.dbml
+      - go run ./hacks/prepend_dbml.go {{.DB_DIR_PATH}}/schema.dbml
+      - npx dbdocs build {{.DB_DIR_PATH}}/schema.dbml
+
+  db:create:
+    desc: "Create a local database instance"
+    cmd: docker exec -it {{.POSTGRES_CONTAINER}} psql -U {{.POSTGRES_USER}} -c "CREATE DATABASE {{.POSTGRES_DBNAME}};"
+    requires:
+      vars:
+        - POSTGRES_CONTAINER
+        - POSTGRES_USER
+        - POSTGRES_DBNAME
+
+  db:drop:
+    prompt: "You'll lose all your data. Do you want to continue?"
+    desc: "Drop the local database instance"
+    cmd: docker exec -it {{.POSTGRES_CONTAINER}} psql -U {{.POSTGRES_USER}} -c "DROP DATABASE IF EXISTS {{.POSTGRES_DBNAME}};"
+    requires:
+      vars:
+        - POSTGRES_CONTAINER
+        - POSTGRES_USER
+        - POSTGRES_DBNAME
+
+  db:recreate:
+    prompt: "You'll lose all your data. Do you want to continue?"
+    desc: "Recreate the local database instance"
+    cmds:
+      - task: db:drop
+      - task: db:create
+
+  migrate:status:
+    aliases: ["m:status"]
+    desc: "See the status of all migrations"
+    cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} status
+    requires:
+      vars:
+        - MIGRATIONS_DIR
+        - POSTGRES_DSN
+
+  migrate:validate:
+    aliases: ["m:validate"]
+    desc: "Check that migration files are not malformed"
+    cmd: goose -dir {{.MIGRATIONS_DIR}} validate
+    requires:
+      vars:
+        - MIGRATIONS_DIR
+        - POSTGRES_DSN
+
+  migrate:create:
+    aliases: ["m:create"]
+    desc: "Create a new migration file"
+    cmd: goose -dir {{.MIGRATIONS_DIR}} -s postgres {{.POSTGRES_DSN}} create {{.CLI_ARGS}} sql
+    requires:
+      vars:
+        - MIGRATIONS_DIR
+        - POSTGRES_DSN
+        - CLI_ARGS
+
+  migrate:up:
+    aliases: ["m:up"]
+    desc: "Apply all available database migrations"
+    cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} up
+    requires:
+      vars:
+        - MIGRATIONS_DIR
+        - POSTGRES_DSN
+
+  migrate:up-to:
+    aliases: ["m:up-to"]
+    desc: "Apply database migrations up to a specific version"
+    cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} up-to {{.CLI_ARGS}}
+    requires:
+      vars:
+        - MIGRATIONS_DIR
+        - POSTGRES_DSN
+        - CLI_ARGS
+
+  migrate:down:
+    aliases: ["m:up-down"]
+    desc: "Roll back a single database migration from the most recent version"
+    cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} down
+    requires:
+      vars:
+        - MIGRATIONS_DIR
+        - POSTGRES_DSN
+
+  migrate:down-to:
+    aliases: ["m:down-to"]
+    desc: "Roll back database migrations down to a specific version"
+    cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} down-to {{.CLI_ARGS}}
+    requires:
+      vars:
+        - MIGRATIONS_DIR
+        - POSTGRES_DSN
+        - CLI_ARGS
+
+  migrate:reset:
+    aliases: ["m:reset"]
+    desc: "Roll back all database migrations"
+    cmd: goose -dir {{.MIGRATIONS_DIR}} postgres {{.POSTGRES_DSN}} reset
+    requires:
+      vars:
+        - MIGRATIONS_DIR
+        - POSTGRES_DSN
+
+  # ;------;
+  # ; SQLC ;
+  # ;------;
+  sqlc:generate:
+    desc: "Generate Go source code from SQL files."
+    cmds:
+      - sqlc generate
+
+  sqlc:verify:
+    desc: "Verify schema, queries, and configuration for the project"
+    cmds:
+      - sqlc verify
+
+  sqlc:vet:
+    desc: "Examine SQL queries for common mistakes (requires database connection)"
+    cmds:
+      - sqlc vet
